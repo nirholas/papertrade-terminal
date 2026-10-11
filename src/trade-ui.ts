@@ -3,7 +3,8 @@ import { zeroAddress } from 'viem';
 import { clearSession, currentSessionStatus, enableTrading, ensureChain, openWalletDialog, sessionExpiryText, sessionActive, isWatchOnly, chainOk, trackIntent } from './account.js';
 import { confirmDialog, kv } from './dialogs.js';
 import { S, currentInstrument, currentMark, emit, instruments, on } from './state.js';
-import { previewOpen, type Side } from './trade-math.js';
+import { parseLink, stripPrefill, type Prefill } from './deeplink.js';
+import { leverageLadder, previewOpen, type Side } from './trade-math.js';
 import { $, apiErrorMessage, esc, fmtPct, fmtPrice, fmtSigned, fmtUsd, shortAddr, store, timeUntil, toast } from './util.js';
 
 const PREFS_KEY = 'papertrade-terminal.prefs.v1';
@@ -255,12 +256,16 @@ function renderPretrade(): void {
       return `<tr><td>${esc(fmtPct(s.move, 3))}</td><td>${esc(fmtPrice(s.exitPrice, scale))}</td><td class="${cls}">${esc(label)}</td></tr>`;
     })
     .join('');
+  const ladder = leverageLadder({ instrument: inst, side: S.side, markPrice: mark, levels: LEVERAGE_QUICK })
+    .map((l) => `<tr${l.leverage === lev ? ' class="cur"' : ''}><td>${l.leverage}x</td><td>${esc(fmtPrice(l.bustPrice, scale))}</td><td>${esc(fmtPct(l.bustDistance, 2))}</td></tr>`)
+    .join('');
   host.innerHTML = `<dl>
       <dt>Notional</dt><dd>${esc(fmtUsd(p.notionalUsd))}</dd>
       <dt>Entry (mark)</dt><dd>${esc(fmtPrice(p.entryPrice, scale))}</dd>
       <dt>Bust price</dt><dd class="neg">${esc(fmtPrice(p.bustPrice, scale))} (${esc(fmtPct(p.bustDistance, 3))})</dd>
     </dl>${hint}
     <table class="scen"><caption>If you close at a ${S.side === 'long' ? 'higher or lower' : 'lower or higher'} price</caption><thead class="visually-hidden"><tr><th>Price change</th><th>Exit price</th><th>Net result</th></tr></thead><tbody>${rows}</tbody></table>
+    <table class="scen ladder"><caption>Leverage ladder (bust price at this entry)</caption><thead><tr><th>Leverage</th><th>Bust price</th><th>Room</th></tr></thead><tbody>${ladder}</tbody></table>
     <p class="muted small">Wins pay after the deadband, impact haircut and 2% fee. Losses are 1:1. Crossing the bust price loses the margin.</p>`;
 }
 
@@ -353,6 +358,63 @@ async function review(): Promise<void> {
   });
 }
 
+let pendingMarket: string | null = null;
+
+function resolveMarket(ref: string): number | null {
+  const list = instruments();
+  const bySymbol = list.find((m) => m.symbol.toUpperCase() === ref.toUpperCase());
+  if (bySymbol) return bySymbol.id;
+  const id = /^\d+$/.test(ref) ? Number(ref) : null;
+  return id !== null && list.some((m) => m.id === id) ? id : null;
+}
+
+function showPrefillNote(text: string, kind: 'info' | 'warn'): void {
+  const el = $('prefill-note');
+  el.hidden = false;
+  el.dataset.kind = kind;
+  el.replaceChildren();
+  const span = document.createElement('span');
+  span.textContent = text;
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'btn btn-sm';
+  close.textContent = 'Dismiss';
+  close.addEventListener('click', () => {
+    el.hidden = true;
+  });
+  el.append(span, close);
+}
+
+/** Fill the ticket from a link. Only sets form fields: the user still reviews and signs in their own wallet. */
+function applyPrefill(p: Prefill): void {
+  if (p.side) setSide(p.side);
+  if (p.margin) {
+    marginEl().value = p.margin;
+  }
+  if (p.leverage) setLeverage(p.leverage);
+  if (p.market) {
+    const id = resolveMarket(p.market);
+    if (id !== null) selectMarket(id);
+    else pendingMarket = p.market;
+  }
+  render();
+  savePrefs();
+  showPrefillNote('Prefilled from a link. Review the market, side, margin and leverage before you trade.', 'info');
+}
+
+function resolvePendingMarket(): void {
+  if (!pendingMarket) return;
+  const ref = pendingMarket;
+  const id = resolveMarket(ref);
+  if (id !== null) {
+    pendingMarket = null;
+    selectMarket(id);
+  } else if (instruments().length) {
+    pendingMarket = null;
+    showPrefillNote(`The link asked for market "${ref}", which is not live. Pick a market yourself before trading.`, 'warn');
+  }
+}
+
 export function initTrade(): void {
   const prefs = loadPrefs();
   if (typeof prefs.market === 'number') S.marketId = prefs.market;
@@ -409,6 +471,7 @@ export function initTrade(): void {
   });
 
   on('markets', () => {
+    resolvePendingMarket();
     syncLeverageBounds();
     renderMarketButtons();
     renderTickers();
@@ -443,4 +506,10 @@ export function initTrade(): void {
   renderSessionCard();
   renderTickers();
   render();
+
+  const link = parseLink(location.search).prefill;
+  if (link) {
+    applyPrefill(link);
+    history.replaceState(null, '', `${location.pathname}${stripPrefill(location.search)}${location.hash}`);
+  }
 }

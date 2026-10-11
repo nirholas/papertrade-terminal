@@ -98,3 +98,22 @@ export function positionView(position: OpenPosition, instrument: Instrument, mar
 export function tradeNetPnlUsd(trade: Pick<AccountTrade, 'adjustedPnlRaw' | 'userPaidFeeRaw'>): number {
   return wadToNumber(BigInt(trade.adjustedPnlRaw) - BigInt(trade.userPaidFeeRaw));
 }
+
+export interface LadderStep {
+  leverage: number;
+  bustPrice: number;
+  /** Fraction of entry the market can move against the position before it busts. */
+  bustDistance: number;
+}
+
+/** Bust price and room to liquidation at each leverage step, from the live mark. */
+export function leverageLadder(params: { instrument: Instrument; side: Side; markPrice: number; levels: readonly number[] }): LadderStep[] {
+  const { instrument, side, markPrice } = params;
+  const scale = Number(instrument.priceScale);
+  const entryRaw = priceToRaw(markPrice, scale);
+  const levels = [...new Set(params.levels.filter((l) => l >= 1 && l <= instrument.maxLeverage))].sort((a, b) => a - b);
+  return levels.map((leverage) => {
+    const bustRaw = liquidationPriceRaw({ entryPriceRaw: entryRaw, leverage, isLong: side === 'long', bustBufferRaw: instrument.bustBufferRaw });
+    return { leverage, bustPrice: priceFromRaw(bustRaw, scale), bustDistance: Math.abs(Number(entryRaw - bustRaw)) / Number(entryRaw) };
+  });
+}

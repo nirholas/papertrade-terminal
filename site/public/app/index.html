@@ -3,21 +3,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>papertrade-terminal: non-custodial Papertrade perps terminal for HyperEVM</title>
+  <title>Papertrade Terminal: non-custodial Papertrade perps terminal for HyperEVM</title>
   <meta name="description" content="Unofficial non-custodial trading terminal for Papertrade, the 1000x synthetic perps exchange on HyperEVM. Connect any wallet, trade with a session key that cannot withdraw, watch live positions and charts, deposit, withdraw and swap for gas.">
-  <link rel="canonical" href="https://papertrade-terminal.pages.dev/">
+  <link rel="canonical" href="https://papertrade-terminal.pages.dev/app/">
   <meta property="og:title" content="papertrade-terminal">
   <meta property="og:description" content="Non-custodial Papertrade perps terminal: live positions, candlesticks, session keys, deposits, withdrawals and swaps on HyperEVM.">
-  <meta property="og:url" content="https://papertrade-terminal.pages.dev/">
+  <meta property="og:url" content="https://papertrade-terminal.pages.dev/app/">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary">
   <meta name="color-scheme" content="dark light">
   <meta name="theme-color" content="#0b0e14">
   <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+  <link rel="mcp-server" href="/mcp">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0e14'/%3E%3Cpath d='M7 9l7 7-7 7' stroke='%235ad1ff' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M17 23h8' stroke='%232fd6a1' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="/styles.css">
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"WebApplication","name":"papertrade-terminal","description":"Unofficial non-custodial trading terminal for Papertrade perps on HyperEVM.","url":"https://papertrade-terminal.pages.dev/","applicationCategory":"FinanceApplication","operatingSystem":"Any","license":"https://www.apache.org/licenses/LICENSE-2.0","codeRepository":"https://github.com/nirholas/papertrade-terminal","author":{"@type":"Person","name":"nirholas"}}
+  {"@context":"https://schema.org","@type":"WebApplication","name":"papertrade-terminal","description":"Unofficial non-custodial trading terminal for Papertrade perps on HyperEVM.","url":"https://papertrade-terminal.pages.dev/app/","applicationCategory":"FinanceApplication","operatingSystem":"Any","license":"https://www.apache.org/licenses/LICENSE-2.0","codeRepository":"https://github.com/nirholas/papertrade-terminal","author":{"@type":"Person","name":"nirholas"}}
   </script>
   <script type="module" src="/app.js"></script>
 </head>
@@ -25,9 +26,10 @@
   <a class="skip" href="#main">Skip to content</a>
 
   <header class="top">
-    <a class="brand" href="/" aria-label="papertrade-terminal home"><span class="brand-mark" aria-hidden="true">&gt;_</span><span class="brand-name">papertrade<span class="brand-sub">terminal</span></span></a>
+    <a class="brand" href="/" aria-label="Papertrade Terminal home"><span class="brand-mark" aria-hidden="true">&gt;_</span><span class="brand-name">papertrade<span class="brand-sub">terminal</span></span></a>
     <div id="tickers" class="tickers" role="tablist" aria-label="Markets"></div>
     <div class="top-right">
+      <a class="os-link" href="https://papertrade-os.pages.dev/?open=terminal" target="_blank" rel="noopener">Open in Papertrade OS</a>
       <span id="stream-status" class="dot" data-kind="idle" title="Live account stream"><span class="visually-hidden">Stream idle</span></span>
       <div id="pt-balance" class="pt-balance" hidden>
         <span class="label">Available</span><span id="pt-available" class="num">-</span>
@@ -38,6 +40,7 @@
   </header>
 
   <div id="banner" class="banner" role="status" hidden></div>
+  <div id="prefill-note" class="banner" data-kind="info" role="status" hidden></div>
 
   <main id="main" class="layout">
     <section id="sec-chart" class="panel chart-panel" aria-label="Charts">
@@ -148,9 +151,11 @@
     <p class="foot-links">
       <a href="https://github.com/nirholas/papertrade-terminal">GitHub</a>
       <a href="https://github.com/nirholas/papertrade-sdk">papertrade-sdk</a>
-      <a href="https://github.com/nirholas/papertrade-ai">papertrade-ai (MCP)</a>
-      <a href="https://papertrade.xyz">papertrade.xyz</a>
+      <a href="/docs/">Docs</a>
+      <a href="/mcp">MCP</a>
       <a href="/llms.txt">llms.txt</a>
+      <a href="https://papertrade-os.pages.dev/?open=terminal" target="_blank" rel="noopener" class="os-foot">Open in Papertrade OS</a>
+      <a href="https://papertrade.xyz">papertrade.xyz</a>
       <a href="https://www.tradingview.com/" rel="noopener">Charts by TradingView Lightweight Charts</a>
     </p>
   </footer>
@@ -178,6 +183,8 @@
       <dt><kbd>/</kbd></dt><dd>Focus margin</dd>
       <dt><kbd>M</kbd></dt><dd>Next market</dd>
       <dt><kbd>[</kbd> / <kbd>]</kbd></dt><dd>Leverage down / up (hold Shift for x10)</dd>
+      <dt><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd></dt><dd>Trade, positions, fund, swap</dd>
+      <dt><kbd>C</kbd></dt><dd>Chart</dd>
       <dt><kbd>Enter</kbd></dt><dd>Review order (in the margin field)</dd>
       <dt><kbd>Esc</kbd></dt><dd>Close any dialog</dd>
       <dt><kbd>?</kbd></dt><dd>This help</dd>

@@ -9,6 +9,7 @@ import { S, on } from './state.js';
 import { focusMargin, initTrade, nextMarket, nudgeLeverage, setSide } from './trade-ui.js';
 import { $, apiErrorMessage, esc, fmtUsd, qsa, shortAddr, toast } from './util.js';
 import { formatUnits } from 'viem';
+import { parseLink } from './deeplink.js';
 
 type SideTab = 'trade' | 'fund' | 'swap';
 type View = 'chart' | 'side' | 'positions';
@@ -144,6 +145,11 @@ function onKey(event: KeyboardEvent): void {
   } else if (key === 'm' || key === 'M') nextMarket();
   else if (key === '[') nudgeLeverage(event.shiftKey ? -10 : -1);
   else if (key === ']') nudgeLeverage(event.shiftKey ? 10 : 1);
+  else if (key === '1') navigate('trade');
+  else if (key === '2') navigate('positions');
+  else if (key === '3') navigate('fund');
+  else if (key === '4') navigate('swap');
+  else if (key === 'c' || key === 'C') navigate('chart');
   else if (key === '?') $<HTMLDialogElement>('dlg-help').showModal();
   else return;
   if (key !== '/') event.preventDefault();
@@ -168,6 +174,7 @@ function initTabs(): void {
 }
 
 function boot(): void {
+  if (parseLink(location.search).embed) document.body.dataset.embed = '1';
   initAccount();
   initTrade();
   initPositions();
