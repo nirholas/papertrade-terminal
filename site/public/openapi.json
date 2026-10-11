@@ -1,0 +1,613 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Papertrade Terminal API",
+    "version": "0.2.0",
+    "summary": "Read-only MCP endpoint and the public Papertrade read proxy.",
+    "description": "Read-only market data, exact quotes and unsigned trade plans for Papertrade perps on HyperEVM. Opens the non-custodial terminal prefilled; the user signs in their own wallet. Unofficial, not affiliated with Papertrade. High leverage can lose the whole margin. Nothing here signs, sends funds or places orders.",
+    "license": {
+      "name": "Apache-2.0",
+      "identifier": "Apache-2.0"
+    },
+    "contact": {
+      "name": "nirholas",
+      "url": "https://github.com/nirholas/papertrade-terminal"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://papertrade-terminal.pages.dev"
+    }
+  ],
+  "externalDocs": {
+    "description": "Documentation",
+    "url": "https://papertrade-terminal.pages.dev/docs/"
+  },
+  "tags": [
+    {
+      "name": "MCP",
+      "description": "Model Context Protocol, Streamable HTTP, stateless."
+    },
+    {
+      "name": "Papertrade",
+      "description": "Same-origin proxy of the public Papertrade API (GET reads only are documented here)."
+    }
+  ],
+  "paths": {
+    "/mcp": {
+      "post": {
+        "tags": [
+          "MCP"
+        ],
+        "operationId": "mcpRpc",
+        "summary": "JSON-RPC 2.0 over Streamable HTTP",
+        "description": "Methods: initialize, ping, tools/list, tools/call, resources/list, prompts/list. A JSON array is processed as a batch (max 20). Send Accept: text/event-stream only to receive a single SSE message. Tools: list_markets, quote_open_position, quote_leverage_ladder, quote_close_position, get_wallet_positions, get_recent_trades, get_candles, get_protocol_status, build_trade_plan. Rate limit 60 requests per minute per IP, body limit 64 KB.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "jsonrpc": {
+                        "const": "2.0"
+                      },
+                      "id": {
+                        "oneOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "integer"
+                          }
+                        ]
+                      },
+                      "method": {
+                        "const": "tools/call"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "enum": [
+                              "list_markets",
+                              "quote_open_position",
+                              "quote_leverage_ladder",
+                              "quote_close_position",
+                              "get_wallet_positions",
+                              "get_recent_trades",
+                              "get_candles",
+                              "get_protocol_status",
+                              "build_trade_plan"
+                            ]
+                          },
+                          "arguments": {
+                            "type": "object"
+                          }
+                        },
+                        "required": [
+                          "name"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "jsonrpc",
+                      "method"
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                ]
+              },
+              "examples": {
+                "toolsList": {
+                  "summary": "List tools",
+                  "value": {
+                    "jsonrpc": "2.0",
+                    "id": 1,
+                    "method": "tools/list"
+                  }
+                },
+                "quote": {
+                  "summary": "Quote a position",
+                  "value": {
+                    "jsonrpc": "2.0",
+                    "id": 2,
+                    "method": "tools/call",
+                    "params": {
+                      "name": "quote_open_position",
+                      "arguments": {
+                        "market": "BTC",
+                        "side": "long",
+                        "marginUsd": 50,
+                        "leverage": 10
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "JSON-RPC response (or SSE message when only text/event-stream is accepted).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Notification or client response accepted, no body."
+          },
+          "400": {
+            "description": "Parse error or invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Body too large.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited. Retry-After says when.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "MCP"
+        ],
+        "operationId": "mcpInfo",
+        "summary": "Describe the server",
+        "description": "Plain GET returns server info and links. GET with Accept: text/event-stream returns 405 because there is no standalone stream.",
+        "responses": {
+          "200": {
+            "description": "Server description.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "SSE stream not offered. Allow: POST."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "MCP"
+        ],
+        "operationId": "mcpDelete",
+        "summary": "Not supported (stateless)",
+        "responses": {
+          "405": {
+            "description": "No sessions to terminate."
+          }
+        }
+      }
+    },
+    "/api/papertrade/state/trading": {
+      "get": {
+        "tags": [
+          "Papertrade"
+        ],
+        "operationId": "tradingState",
+        "summary": "Instruments, open interest, caps and accepted intent actions",
+        "responses": {
+          "200": {
+            "description": "Compact trading state (arrays, decode with papertrade-sdk).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/papertrade/query/protocol/trades/recent": {
+      "get": {
+        "tags": [
+          "Papertrade"
+        ],
+        "operationId": "recentTrades",
+        "summary": "Recent opens, closes and liquidations",
+        "responses": {
+          "200": {
+            "description": "Recent events.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/papertrade/query/notices": {
+      "get": {
+        "tags": [
+          "Papertrade"
+        ],
+        "operationId": "notices",
+        "summary": "Operator notices (untrusted text)",
+        "responses": {
+          "200": {
+            "description": "Notices.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/papertrade/relayer/health": {
+      "get": {
+        "tags": [
+          "Papertrade"
+        ],
+        "operationId": "relayerHealth",
+        "summary": "Relayer health",
+        "responses": {
+          "200": {
+            "description": "Health.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/papertrade/query/markets/{id}/price-history": {
+      "get": {
+        "tags": [
+          "Papertrade"
+        ],
+        "operationId": "priceHistory",
+        "summary": "One price-history tile (use papertrade-sdk to plan tiles)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "fromMs",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "toMs",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "intervalMs",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                125,
+                1000,
+                60000
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Columnar tile.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "list_markets_input": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "quote_open_position_input": {
+        "type": "object",
+        "properties": {
+          "market": {
+            "type": "string",
+            "description": "Market symbol such as BTC or ETH (case-insensitive). Call list_markets for the live set.",
+            "minLength": 1,
+            "maxLength": 12
+          },
+          "side": {
+            "type": "string",
+            "enum": [
+              "long",
+              "short"
+            ],
+            "description": "Trade direction."
+          },
+          "marginUsd": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 10000000,
+            "description": "Margin in USD (what you put at risk)."
+          },
+          "leverage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Leverage multiple, 1 to the market maximum (up to 1000)."
+          }
+        },
+        "required": [
+          "market",
+          "side",
+          "marginUsd",
+          "leverage"
+        ],
+        "additionalProperties": false
+      },
+      "quote_leverage_ladder_input": {
+        "type": "object",
+        "properties": {
+          "market": {
+            "type": "string",
+            "description": "Market symbol such as BTC or ETH (case-insensitive). Call list_markets for the live set.",
+            "minLength": 1,
+            "maxLength": 12
+          },
+          "side": {
+            "type": "string",
+            "enum": [
+              "long",
+              "short"
+            ],
+            "description": "Trade direction."
+          },
+          "marginUsd": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 10000000,
+            "description": "Margin in USD (what you put at risk)."
+          }
+        },
+        "required": [
+          "market",
+          "side",
+          "marginUsd"
+        ],
+        "additionalProperties": false
+      },
+      "quote_close_position_input": {
+        "type": "object",
+        "properties": {
+          "market": {
+            "type": "string",
+            "description": "Market symbol such as BTC or ETH (case-insensitive). Call list_markets for the live set.",
+            "minLength": 1,
+            "maxLength": 12
+          },
+          "side": {
+            "type": "string",
+            "enum": [
+              "long",
+              "short"
+            ],
+            "description": "Trade direction."
+          },
+          "entryPrice": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Position entry price in USD."
+          },
+          "exitPrice": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Hypothetical exit price. Defaults to the current mark."
+          },
+          "marginUsd": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 10000000,
+            "description": "Margin in USD (what you put at risk)."
+          },
+          "leverage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Leverage multiple, 1 to the market maximum (up to 1000)."
+          }
+        },
+        "required": [
+          "market",
+          "side",
+          "entryPrice",
+          "marginUsd",
+          "leverage"
+        ],
+        "additionalProperties": false
+      },
+      "get_wallet_positions_input": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string",
+            "pattern": "^0x[0-9a-fA-F]{40}$",
+            "description": "Wallet address (0x, 40 hex characters)."
+          }
+        },
+        "required": [
+          "address"
+        ],
+        "additionalProperties": false
+      },
+      "get_recent_trades_input": {
+        "type": "object",
+        "properties": {
+          "market": {
+            "type": "string",
+            "description": "Filter by market symbol.",
+            "maxLength": 12
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "open",
+              "close",
+              "liquidation"
+            ],
+            "description": "Filter by event kind."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "description": "Maximum rows, default 20."
+          }
+        },
+        "additionalProperties": false
+      },
+      "get_candles_input": {
+        "type": "object",
+        "properties": {
+          "market": {
+            "type": "string",
+            "description": "Market symbol such as BTC or ETH (case-insensitive). Call list_markets for the live set.",
+            "minLength": 1,
+            "maxLength": 12
+          },
+          "interval": {
+            "type": "string",
+            "enum": [
+              "1m",
+              "5m",
+              "15m",
+              "1h",
+              "4h",
+              "1d"
+            ],
+            "description": "Candle size, default 1h."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "description": "Number of candles, default 48."
+          }
+        },
+        "required": [
+          "market"
+        ],
+        "additionalProperties": false
+      },
+      "get_protocol_status_input": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "build_trade_plan_input": {
+        "type": "object",
+        "properties": {
+          "market": {
+            "type": "string",
+            "description": "Market symbol such as BTC or ETH (case-insensitive). Call list_markets for the live set.",
+            "minLength": 1,
+            "maxLength": 12
+          },
+          "side": {
+            "type": "string",
+            "enum": [
+              "long",
+              "short"
+            ],
+            "description": "Trade direction."
+          },
+          "marginUsd": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 10000000,
+            "description": "Margin in USD (what you put at risk)."
+          },
+          "leverage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Leverage multiple, 1 to the market maximum (up to 1000)."
+          },
+          "address": {
+            "type": "string",
+            "pattern": "^0x[0-9a-fA-F]{40}$",
+            "description": "Optional wallet address, to check balance and session key status."
+          }
+        },
+        "required": [
+          "market",
+          "side",
+          "marginUsd",
+          "leverage"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

@@ -3,6 +3,7 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Content-Security-Policy: default-src 'self'; script-src 'self' https://s3.tradingview.com; style-src 'self'; img-src 'self' data: https://s3.tradingview.com https://*.tradingview.com; font-src 'self' data:; connect-src 'self' https://api.hyperliquid.xyz wss://api.hyperliquid.xyz https://rpc.hyperliquid.xyz https://rpc.hypurrscan.io https://aggregator-api.kyberswap.com https://api.geckoterminal.com https://*.tradingview.com wss://*.tradingview.com; frame-src https://www.tradingview.com https://s.tradingview.com https://www.tradingview-widget.com https://www.dextools.io https://dextools.io https://www.geckoterminal.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'
+  Link: </.well-known/api-catalog>; rel="api-catalog", </openapi.json>; rel="service-desc"; type="application/vnd.oai.openapi+json", </docs/>; rel="service-doc", </mcp>; rel="mcp-server", </.well-known/mcp/server-card.json>; rel="describedby", </llms.txt>; rel="describedby"; type="text/plain"
 
 /app.js
   Cache-Control: public, max-age=300
@@ -16,3 +17,50 @@
 /llms.txt
   Access-Control-Allow-Origin: *
   Content-Type: text/plain; charset=utf-8
+
+/app
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://s3.tradingview.com; style-src 'self'; img-src 'self' data: https://s3.tradingview.com https://*.tradingview.com; font-src 'self' data:; connect-src 'self' https://api.hyperliquid.xyz wss://api.hyperliquid.xyz https://rpc.hyperliquid.xyz https://rpc.hypurrscan.io https://aggregator-api.kyberswap.com https://api.geckoterminal.com https://*.tradingview.com wss://*.tradingview.com; frame-src https://www.tradingview.com https://s.tradingview.com https://www.tradingview-widget.com https://www.dextools.io https://dextools.io https://www.geckoterminal.com; base-uri 'none'; form-action 'self'; frame-ancestors 'self' https://papertrade-os.pages.dev https://*.pages.dev; object-src 'none'
+
+/app/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://s3.tradingview.com; style-src 'self'; img-src 'self' data: https://s3.tradingview.com https://*.tradingview.com; font-src 'self' data:; connect-src 'self' https://api.hyperliquid.xyz wss://api.hyperliquid.xyz https://rpc.hyperliquid.xyz https://rpc.hypurrscan.io https://aggregator-api.kyberswap.com https://api.geckoterminal.com https://*.tradingview.com wss://*.tradingview.com; frame-src https://www.tradingview.com https://s.tradingview.com https://www.tradingview-widget.com https://www.dextools.io https://dextools.io https://www.geckoterminal.com; base-uri 'none'; form-action 'self'; frame-ancestors 'self' https://papertrade-os.pages.dev https://*.pages.dev; object-src 'none'
+
+/.well-known/api-catalog
+  Content-Type: application/linkset+json; profile="https://www.rfc-editor.org/info/rfc9727"
+  Access-Control-Allow-Origin: *
+
+/.well-known/mcp.json
+  Content-Type: application/json; charset=utf-8
+  Access-Control-Allow-Origin: *
+
+/.well-known/agent-card.json
+  Content-Type: application/json; charset=utf-8
+  Access-Control-Allow-Origin: *
+
+/.well-known/agent.json
+  Content-Type: application/json; charset=utf-8
+  Access-Control-Allow-Origin: *
+
+/.well-known/mcp/*
+  Content-Type: application/json; charset=utf-8
+  Access-Control-Allow-Origin: *
+
+/openapi.json
+  Content-Type: application/json; charset=utf-8
+  Access-Control-Allow-Origin: *
+
+/llms-full.txt
+  Access-Control-Allow-Origin: *
+  Content-Type: text/plain; charset=utf-8
+
+/docs/*.md
+  Content-Type: text/markdown; charset=utf-8
+  Access-Control-Allow-Origin: *
+
+/robots.txt
+  Content-Type: text/plain; charset=utf-8
+
+/sitemap.xml
+  Content-Type: application/xml; charset=utf-8
+

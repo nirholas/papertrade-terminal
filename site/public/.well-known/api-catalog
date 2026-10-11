@@ -1,0 +1,59 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://papertrade-terminal.pages.dev/mcp",
+      "service-desc": [
+        {
+          "href": "https://papertrade-terminal.pages.dev/openapi.json",
+          "type": "application/vnd.oai.openapi+json;version=3.1"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://papertrade-terminal.pages.dev/docs/",
+          "type": "text/html"
+        }
+      ],
+      "describedby": [
+        {
+          "href": "https://papertrade-terminal.pages.dev/.well-known/mcp/server-card.json",
+          "type": "application/json"
+        }
+      ]
+    },
+    {
+      "anchor": "https://papertrade-terminal.pages.dev/api/papertrade",
+      "service-desc": [
+        {
+          "href": "https://papertrade-terminal.pages.dev/openapi.json",
+          "type": "application/vnd.oai.openapi+json;version=3.1"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://papertrade-terminal.pages.dev/docs/reference/",
+          "type": "text/html"
+        }
+      ]
+    },
+    {
+      "anchor": "https://papertrade-terminal.pages.dev/",
+      "service-doc": [
+        {
+          "href": "https://papertrade-terminal.pages.dev/llms.txt",
+          "type": "text/plain"
+        },
+        {
+          "href": "https://papertrade-terminal.pages.dev/llms-full.txt",
+          "type": "text/plain"
+        }
+      ],
+      "describedby": [
+        {
+          "href": "https://papertrade-terminal.pages.dev/.well-known/agent-card.json",
+          "type": "application/json"
+        }
+      ]
+    }
+  ]
+}

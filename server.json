@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.nirholas/papertrade-terminal",
+  "title": "Papertrade Terminal",
+  "description": "Read-only Papertrade perps data, exact quotes and unsigned trade plans that open a non-custodial terminal prefilled. Unofficial.",
+  "version": "0.2.0",
+  "websiteUrl": "https://papertrade-terminal.pages.dev/docs/",
+  "repository": {
+    "url": "https://github.com/nirholas/papertrade-terminal",
+    "source": "github"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://papertrade-terminal.pages.dev/mcp"
+    }
+  ]
+}
