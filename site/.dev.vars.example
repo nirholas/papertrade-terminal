@@ -1,0 +1,2 @@
+# Optional. Override the Papertrade API origin the same-origin proxy forwards to.
+# PAPERTRADE_API_URL=https://exchange.papertrade.xyz

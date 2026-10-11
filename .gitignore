@@ -1,0 +1,8 @@
+node_modules
+dist
+*.tgz
+.env
+.dev.vars
+.wrangler
+site/public/app.js*
+site/public/chunks

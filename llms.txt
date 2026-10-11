@@ -1,0 +1,18 @@
+# papertrade-terminal
+
+> Unofficial, non-custodial trading terminal for Papertrade (1000x synthetic perps on Hyperliquid HyperEVM, chain 999). Not affiliated with Papertrade. High leverage can lose your whole margin.
+
+Connect an injected wallet, sign one RegisterSessionKey message, then trade with a browser session key (can trade, cannot withdraw). Charts, positions, deposit/withdraw and a KyberSwap swap included.
+
+## Links
+
+- [Terminal](https://papertrade-terminal.pages.dev/): the app. Use ?watch=0x... for a read-only account view.
+- [Source](https://github.com/nirholas/papertrade-terminal): MIT licensed.
+- [papertrade-sdk](https://github.com/nirholas/papertrade-sdk): the protocol SDK this app is built on.
+- [papertrade-ai](https://github.com/nirholas/papertrade-ai): MCP server and CLI for agents.
+- [AGENTS.md](https://github.com/nirholas/papertrade-terminal/blob/main/AGENTS.md): rules for agents.
+
+## Notes for agents
+
+- The app is a UI; it exposes no HTTP API of its own beyond a same-origin proxy at /api/papertrade/* for the public Papertrade API.
+- Never sign or send transactions on a user's behalf. All signing happens in the user's wallet or their browser session key.

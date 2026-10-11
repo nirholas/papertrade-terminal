@@ -1,0 +1,18 @@
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://s3.tradingview.com; style-src 'self'; img-src 'self' data: https://s3.tradingview.com https://*.tradingview.com; font-src 'self' data:; connect-src 'self' https://api.hyperliquid.xyz wss://api.hyperliquid.xyz https://rpc.hyperliquid.xyz https://rpc.hypurrscan.io https://aggregator-api.kyberswap.com https://api.geckoterminal.com https://*.tradingview.com wss://*.tradingview.com; frame-src https://www.tradingview.com https://s.tradingview.com https://www.tradingview-widget.com https://www.dextools.io https://dextools.io https://www.geckoterminal.com; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'
+
+/app.js
+  Cache-Control: public, max-age=300
+
+/chunks/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/.well-known/*
+  Access-Control-Allow-Origin: *
+
+/llms.txt
+  Access-Control-Allow-Origin: *
+  Content-Type: text/plain; charset=utf-8

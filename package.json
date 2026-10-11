@@ -1,0 +1,54 @@
+{
+  "name": "papertrade-terminal",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Unofficial non-custodial trading terminal for Papertrade perps on HyperEVM: wallet connect, session keys, live positions, candlestick and TradingView charts, deposits, withdrawals and swaps. Runs as a Cloudflare Pages app.",
+  "license": "MIT",
+  "author": "nirholas",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit && tsc --noEmit -p site/functions",
+    "test": "vitest run",
+    "build:site": "node scripts/build-site.mjs",
+    "dev:site": "npm run build:site && cd site && wrangler pages dev --port 8788",
+    "deploy:site": "npm run build:site && cd site && wrangler pages deploy"
+  },
+  "keywords": [
+    "papertrade",
+    "hyperliquid",
+    "hyperevm",
+    "perps",
+    "trading-terminal",
+    "eip-6963",
+    "session-keys",
+    "lightweight-charts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nirholas/papertrade-terminal.git"
+  },
+  "homepage": "https://github.com/nirholas/papertrade-terminal#readme",
+  "bugs": {
+    "url": "https://github.com/nirholas/papertrade-terminal/issues"
+  },
+  "dependencies": {
+    "lightweight-charts": "^5.2.1",
+    "papertrade-sdk": "file:../papertrade-sdk-0.1.0.tgz",
+    "viem": "^2.57.4"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261010.1",
+    "@types/node": "^26.6.5",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3",
+    "wrangler": "^4.149.0"
+  },
+  "allowScripts": {
+    "workerd@1.20261006.1": true,
+    "esbuild@0.28.2": true
+  }
+}

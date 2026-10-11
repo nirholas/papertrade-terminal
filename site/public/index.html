@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>papertrade-terminal: non-custodial Papertrade perps terminal for HyperEVM</title>
+  <meta name="description" content="Unofficial non-custodial trading terminal for Papertrade, the 1000x synthetic perps exchange on HyperEVM. Connect any wallet, trade with a session key that cannot withdraw, watch live positions and charts, deposit, withdraw and swap for gas.">
+  <link rel="canonical" href="https://papertrade-terminal.pages.dev/">
+  <meta property="og:title" content="papertrade-terminal">
+  <meta property="og:description" content="Non-custodial Papertrade perps terminal: live positions, candlesticks, session keys, deposits, withdrawals and swaps on HyperEVM.">
+  <meta property="og:url" content="https://papertrade-terminal.pages.dev/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#0b0e14">
+  <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0e14'/%3E%3Cpath d='M7 9l7 7-7 7' stroke='%235ad1ff' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M17 23h8' stroke='%232fd6a1' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/styles.css">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebApplication","name":"papertrade-terminal","description":"Unofficial non-custodial trading terminal for Papertrade perps on HyperEVM.","url":"https://papertrade-terminal.pages.dev/","applicationCategory":"FinanceApplication","operatingSystem":"Any","license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/nirholas/papertrade-terminal","author":{"@type":"Person","name":"nirholas"}}
+  </script>
+  <script type="module" src="/app.js"></script>
+</head>
+<body data-view="chart" data-side="trade">
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="top">
+    <a class="brand" href="/" aria-label="papertrade-terminal home"><span class="brand-mark" aria-hidden="true">&gt;_</span><span class="brand-name">papertrade<span class="brand-sub">terminal</span></span></a>
+    <div id="tickers" class="tickers" role="tablist" aria-label="Markets"></div>
+    <div class="top-right">
+      <span id="stream-status" class="dot" data-kind="idle" title="Live account stream"><span class="visually-hidden">Stream idle</span></span>
+      <div id="pt-balance" class="pt-balance" hidden>
+        <span class="label">Available</span><span id="pt-available" class="num">-</span>
+      </div>
+      <button id="session-chip" class="chip" type="button" hidden></button>
+      <button id="wallet-btn" class="btn btn-primary" type="button">Connect wallet</button>
+    </div>
+  </header>
+
+  <div id="banner" class="banner" role="status" hidden></div>
+
+  <main id="main" class="layout">
+    <section id="sec-chart" class="panel chart-panel" aria-label="Charts">
+      <div class="panel-head">
+        <div class="tabs" role="tablist" aria-label="Chart type">
+          <button role="tab" id="ctab-candles" class="tab" aria-selected="true" aria-controls="cpane-candles" data-ctab="candles">Candles</button>
+          <button role="tab" id="ctab-tv" class="tab" aria-selected="false" aria-controls="cpane-tv" data-ctab="tv" tabindex="-1">TradingView</button>
+          <button role="tab" id="ctab-pool" class="tab" aria-selected="false" aria-controls="cpane-pool" data-ctab="pool" tabindex="-1">HYPE / USDC pool</button>
+        </div>
+        <div id="intervals" class="seg" role="group" aria-label="Candle interval"></div>
+      </div>
+      <div class="chart-meta"><span id="chart-title" class="chart-title">BTC</span><span id="chart-last" class="num">-</span><span id="chart-status" class="muted small" aria-live="polite"></span></div>
+      <div class="chart-body">
+        <div id="cpane-candles" class="cpane" role="tabpanel" aria-labelledby="ctab-candles">
+          <div id="candle-host" class="chart-host"></div>
+          <div id="candle-error" class="state-box" hidden></div>
+        </div>
+        <div id="cpane-tv" class="cpane" role="tabpanel" aria-labelledby="ctab-tv" hidden>
+          <div id="tv-host" class="chart-host"></div>
+          <p class="muted small embed-note">Free TradingView widget (spot reference price, not the Papertrade mark). Loaded from s3.tradingview.com on demand.</p>
+        </div>
+        <div id="cpane-pool" class="cpane" role="tabpanel" aria-labelledby="ctab-pool" hidden>
+          <div class="pool-bar">
+            <div class="seg" role="group" aria-label="Pool chart provider">
+              <button type="button" class="seg-btn" data-pool="native" aria-pressed="true">Candles</button>
+              <button type="button" class="seg-btn" data-pool="dextools" aria-pressed="false">DexTools</button>
+              <button type="button" class="seg-btn" data-pool="gecko" aria-pressed="false">GeckoTerminal</button>
+            </div>
+            <span id="pool-info" class="muted small"></span>
+            <span id="pool-status" class="muted small" aria-live="polite"></span>
+            <a id="pool-link" class="small" href="#" target="_blank" rel="noopener noreferrer" hidden>Open pool</a>
+          </div>
+          <div id="pool-host" class="chart-host"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-side" class="panel side-panel" aria-label="Order and funding">
+      <div class="panel-head">
+        <div class="tabs" role="tablist" aria-label="Terminal sections">
+          <button role="tab" id="stab-trade" class="tab" aria-selected="true" aria-controls="spane-trade" data-stab="trade">Trade</button>
+          <button role="tab" id="stab-fund" class="tab" aria-selected="false" aria-controls="spane-fund" data-stab="fund" tabindex="-1">Fund</button>
+          <button role="tab" id="stab-swap" class="tab" aria-selected="false" aria-controls="spane-swap" data-stab="swap" tabindex="-1">Swap</button>
+        </div>
+        <button id="help-btn" class="icon-btn" type="button" aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)">?</button>
+      </div>
+
+      <div id="spane-trade" class="spane" role="tabpanel" aria-labelledby="stab-trade">
+        <div id="session-card" class="card"></div>
+        <form id="order-form" novalidate autocomplete="off">
+          <div id="market-seg" class="seg seg-full" role="group" aria-label="Market"></div>
+          <div class="mid-row"><span class="label">Mark price</span><span id="mid" class="num big">-</span></div>
+          <div class="side-toggle" role="group" aria-label="Side">
+            <button type="button" id="side-long" class="side side-long" aria-pressed="true">Long <kbd>B</kbd></button>
+            <button type="button" id="side-short" class="side side-short" aria-pressed="false">Short <kbd>S</kbd></button>
+          </div>
+          <div class="field">
+            <label for="margin">Margin (USD) <kbd>/</kbd></label>
+            <div class="input-row"><span class="prefix">$</span><input id="margin" inputmode="decimal" placeholder="10 minimum" spellcheck="false"></div>
+            <div class="quick" id="margin-quick" role="group" aria-label="Quick margin"></div>
+            <p class="muted small">Available <span id="avail" class="num">-</span></p>
+          </div>
+          <div class="field">
+            <label for="lev-num">Leverage</label>
+            <div class="lev-row"><input id="lev-range" type="range" min="1" max="1000" step="1" value="10" aria-label="Leverage slider"><div class="input-row lev-num"><input id="lev-num" inputmode="numeric" value="10" spellcheck="false"><span class="suffix">x</span></div></div>
+            <div class="quick" id="lev-quick" role="group" aria-label="Quick leverage"></div>
+          </div>
+          <div id="pretrade" class="pretrade" aria-live="polite"></div>
+          <p id="validation" class="validation" role="alert" hidden></p>
+          <button id="review-btn" class="btn btn-long btn-block" type="submit" disabled>Connect a wallet to trade</button>
+        </form>
+      </div>
+
+      <div id="spane-fund" class="spane" role="tabpanel" aria-labelledby="stab-fund" hidden>
+        <div id="fund-root"></div>
+      </div>
+
+      <div id="spane-swap" class="spane" role="tabpanel" aria-labelledby="stab-swap" hidden>
+        <div id="swap-root"><div class="skeleton wide"></div></div>
+      </div>
+    </section>
+
+    <section id="sec-positions" class="panel pos-panel" aria-label="Positions">
+      <div class="panel-head">
+        <div class="tabs" role="tablist" aria-label="Positions">
+          <button role="tab" id="ptab-open" class="tab" aria-selected="true" aria-controls="ppane-open" data-ptab="open">Positions <span id="count-open" class="count">0</span></button>
+          <button role="tab" id="ptab-pending" class="tab" aria-selected="false" aria-controls="ppane-pending" data-ptab="pending" tabindex="-1">Pending <span id="count-pending" class="count">0</span></button>
+          <button role="tab" id="ptab-history" class="tab" aria-selected="false" aria-controls="ppane-history" data-ptab="history" tabindex="-1">History</button>
+        </div>
+        <button id="close-selected" class="btn btn-sm btn-danger" type="button" hidden>Close selected</button>
+      </div>
+      <div id="ppane-open" class="ppane" role="tabpanel" aria-labelledby="ptab-open"></div>
+      <div id="ppane-pending" class="ppane" role="tabpanel" aria-labelledby="ptab-pending" hidden></div>
+      <div id="ppane-history" class="ppane" role="tabpanel" aria-labelledby="ptab-history" hidden></div>
+    </section>
+  </main>
+
+  <nav class="mobile-nav" aria-label="Sections">
+    <button type="button" data-nav="chart" aria-current="true">Chart</button>
+    <button type="button" data-nav="trade" aria-current="false">Trade</button>
+    <button type="button" data-nav="positions" aria-current="false">Positions</button>
+    <button type="button" data-nav="fund" aria-current="false">Fund</button>
+    <button type="button" data-nav="swap" aria-current="false">Swap</button>
+  </nav>
+
+  <footer class="foot">
+    <p class="disclaimer"><strong>Unofficial.</strong> An independent community project, not affiliated with Papertrade. High leverage can lose your whole margin in seconds. Non-custodial: this site never sees your wallet key. The session key lives only in this browser.</p>
+    <p class="foot-links">
+      <a href="https://github.com/nirholas/papertrade-terminal">GitHub</a>
+      <a href="https://github.com/nirholas/papertrade-sdk">papertrade-sdk</a>
+      <a href="https://github.com/nirholas/papertrade-ai">papertrade-ai (MCP)</a>
+      <a href="https://papertrade.xyz">papertrade.xyz</a>
+      <a href="/llms.txt">llms.txt</a>
+      <a href="https://www.tradingview.com/" rel="noopener">Charts by TradingView Lightweight Charts</a>
+    </p>
+  </footer>
+
+  <dialog id="dlg-wallet" class="dlg" aria-labelledby="dlg-wallet-title">
+    <form method="dialog" class="dlg-head"><h2 id="dlg-wallet-title">Connect a wallet</h2><button class="icon-btn" aria-label="Close">x</button></form>
+    <div id="wallet-list" class="wallet-list"></div>
+    <p id="wallet-msg" class="validation" role="alert" hidden></p>
+    <details class="watch"><summary>Or watch an address (read-only)</summary>
+      <form id="watch-form" class="watch-form"><label class="visually-hidden" for="watch-addr">Wallet address</label><input id="watch-addr" placeholder="0x..." spellcheck="false" autocomplete="off"><button class="btn btn-sm" type="submit">Watch</button></form>
+    </details>
+  </dialog>
+
+  <dialog id="dlg-confirm" class="dlg" aria-labelledby="dlg-confirm-title">
+    <div class="dlg-head"><h2 id="dlg-confirm-title">Confirm</h2><button id="dlg-confirm-x" class="icon-btn" type="button" aria-label="Close">x</button></div>
+    <div id="dlg-confirm-body"></div>
+    <p id="dlg-confirm-err" class="validation" role="alert" hidden></p>
+    <div class="dlg-actions"><button id="dlg-confirm-cancel" class="btn" type="button">Cancel</button><button id="dlg-confirm-ok" class="btn btn-primary" type="button">Confirm</button></div>
+  </dialog>
+
+  <dialog id="dlg-help" class="dlg" aria-labelledby="dlg-help-title">
+    <form method="dialog" class="dlg-head"><h2 id="dlg-help-title">Keyboard shortcuts</h2><button class="icon-btn" aria-label="Close">x</button></form>
+    <dl class="keys">
+      <dt><kbd>B</kbd> / <kbd>S</kbd></dt><dd>Long / short</dd>
+      <dt><kbd>/</kbd></dt><dd>Focus margin</dd>
+      <dt><kbd>M</kbd></dt><dd>Next market</dd>
+      <dt><kbd>[</kbd> / <kbd>]</kbd></dt><dd>Leverage down / up (hold Shift for x10)</dd>
+      <dt><kbd>Enter</kbd></dt><dd>Review order (in the margin field)</dd>
+      <dt><kbd>Esc</kbd></dt><dd>Close any dialog</dd>
+      <dt><kbd>?</kbd></dt><dd>This help</dd>
+    </dl>
+  </dialog>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+</body>
+</html>
