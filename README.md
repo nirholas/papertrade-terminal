@@ -5,9 +5,11 @@
 [![HyperEVM](https://img.shields.io/badge/HyperEVM-chain_999-0a8f5b?style=flat-square)](https://papertrade.xyz)
 [![GitHub stars](https://img.shields.io/github/stars/nirholas/papertrade-terminal?style=flat-square&color=0a8f5b)](https://github.com/nirholas/papertrade-terminal/stargazers)
 [![Last commit](https://img.shields.io/github/last-commit/nirholas/papertrade-terminal?style=flat-square&color=0a8f5b)](https://github.com/nirholas/papertrade-terminal/commits/main)
+[![MCP](https://img.shields.io/badge/MCP-read--only_server-5ad1ff?style=flat-square)](https://papertrade-terminal.pages.dev/docs/mcp/)
+[![Docs](https://img.shields.io/badge/docs-papertrade--terminal.pages.dev-0a8f5b?style=flat-square)](https://papertrade-terminal.pages.dev/docs/)
 [![Unofficial](https://img.shields.io/badge/community-unofficial-lightgrey?style=flat-square)](#the-papertrade-toolkit)
 
-[Live site](https://papertrade-terminal.pages.dev) · [Issues](https://github.com/nirholas/papertrade-terminal/issues) · [Discussions](https://github.com/nirholas/papertrade-terminal/discussions) · [Papertrade](https://papertrade.xyz) · [Toolkit](#the-papertrade-toolkit)
+[Live site](https://papertrade-terminal.pages.dev) · [Terminal](https://papertrade-terminal.pages.dev/app/) · [Docs](https://papertrade-terminal.pages.dev/docs/) · [MCP](https://papertrade-terminal.pages.dev/mcp) · [Issues](https://github.com/nirholas/papertrade-terminal/issues) · [Discussions](https://github.com/nirholas/papertrade-terminal/discussions) · [Papertrade](https://papertrade.xyz) · [Toolkit](#the-papertrade-toolkit)
 
 Unofficial, non-custodial trading terminal for [Papertrade](https://papertrade.xyz), the fully on-chain 1000x synthetic perps exchange on Hyperliquid's HyperEVM (chain 999). Static app plus a tiny same-origin proxy, deployable on Cloudflare Pages.
 
@@ -28,7 +30,20 @@ The screen has a candle chart on the left, the order ticket on the right (Trade,
 - **Charts**: lightweight-charts candles with interval switcher (Hyperliquid candles), entry and bust lines for your positions, a TradingView tab (BTC and ETH), and a HYPE/USDC pool tab (native GeckoTerminal candles, with DexTools and GeckoTerminal embed toggles).
 - **Fund**: deposit through `buildHyperEvmDeposit` (each step signed in your wallet, with the activation fee and minimum shown), withdraw through `prepareWithdraw` with route (HyperCore or HyperEVM), fee and minimum shown.
 - **Swap**: KyberSwap quote on HyperEVM, route, rate, minimum received, price impact, gas, exact-amount approve, and a transaction your wallet signs.
-- **Keyboard**: `B` long, `S` short, `/` margin, `M` market, `[` `]` interval, `?` help, `Esc` close.
+- **Quote ladder**: besides the close-outcome table, a leverage ladder shows the bust price and room to liquidation at every leverage step for the live mark.
+- **Deep links**: `/?market=BTC&side=long&margin=1000&leverage=10` opens the terminal with the ticket prefilled behind a review banner. `?embed=1` hides marketing chrome so it can run as a window in [Papertrade OS](https://papertrade-os.pages.dev/?open=terminal).
+- **Keyboard**: `B` long, `S` short, `/` margin, `M` market, `[` `]` leverage, `1` to `4` Trade, Positions, Fund, Swap, `C` chart, `?` help, `Esc` close.
+
+## MCP server and AI connectors
+
+A read-only [Model Context Protocol](https://modelcontextprotocol.io) server runs at **https://papertrade-terminal.pages.dev/mcp** (Streamable HTTP, stateless, no key). Nine tools: `list_markets`, `quote_open_position`, `quote_leverage_ladder`, `quote_close_position`, `get_wallet_positions`, `get_recent_trades`, `get_candles`, `get_protocol_status` and `build_trade_plan`. Nothing signs, sends funds or places orders. `build_trade_plan` returns an unsigned plan plus a deep link that opens this terminal prefilled; the user signs in their own wallet.
+
+```sh
+claude mcp add --transport http papertrade-terminal https://papertrade-terminal.pages.dev/mcp
+codex mcp add papertrade-terminal --url https://papertrade-terminal.pages.dev/mcp
+```
+
+Gemini CLI, Cursor, VS Code, Claude Desktop and claude.ai, ChatGPT, the Claude and OpenAI APIs, Windsurf, Zed, Cline, Goose and Continue are covered in [Connect your AI](https://papertrade-terminal.pages.dev/docs/connect-your-ai/). Discovery files: [`/.well-known/mcp/server-card.json`](https://papertrade-terminal.pages.dev/.well-known/mcp/server-card.json), [`/.well-known/agent-card.json`](https://papertrade-terminal.pages.dev/.well-known/agent-card.json), [`/.well-known/api-catalog`](https://papertrade-terminal.pages.dev/.well-known/api-catalog), [`/openapi.json`](https://papertrade-terminal.pages.dev/openapi.json), [`/llms.txt`](https://papertrade-terminal.pages.dev/llms.txt). Documentation lives in [`docs/`](docs/) and is published at https://papertrade-terminal.pages.dev/docs/.
 
 ## Quick start
 
@@ -45,8 +60,8 @@ Open http://localhost:8788. Add `?watch=0xYourAddress` to browse an account read
 | Script | Does |
 | --- | --- |
 | `npm run typecheck` | `tsc --noEmit` for the app and for `site/functions` (Workers types) |
-| `npm test` | vitest: trade math, signing round-trips, swap parsing, session store, util |
-| `npm run build:site` | esbuild (splitting, lazy chunks) into `site/public` |
+| `npm test` | vitest: trade math, deep links, MCP protocol and tools, discovery files, docs build, signing round-trips, swap parsing, session store, util |
+| `npm run build:site` | renders `docs/` to `site/public/docs`, regenerates the discovery files, then esbuild (splitting, lazy chunks) into `site/public` |
 | `npm run dev:site` | build and serve with `wrangler pages dev` |
 | `npm run deploy:site` | build and `wrangler pages deploy` |
 
