@@ -1,6 +1,6 @@
 {
   "name": "papertrade-terminal",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Unofficial non-custodial trading terminal for Papertrade perps on HyperEVM: wallet connect, session keys, live positions, candlestick and TradingView charts, deposits, withdrawals and swaps. Runs as a Cloudflare Pages app.",
   "license": "Apache-2.0",
@@ -12,9 +12,11 @@
   "scripts": {
     "typecheck": "tsc --noEmit && tsc --noEmit -p site/functions",
     "test": "vitest run",
-    "build:site": "node scripts/build-site.mjs",
+    "build:docs": "node scripts/build-docs.mjs",
+    "build:site": "node scripts/build-docs.mjs && node scripts/build-discovery.mjs && node scripts/build-site.mjs",
     "dev:site": "npm run build:site && cd site && wrangler pages dev --port 8788",
-    "deploy:site": "npm run build:site && cd site && wrangler pages deploy"
+    "deploy:site": "npm run build:site && cd site && wrangler pages deploy",
+    "build:discovery": "node scripts/build-discovery.mjs"
   },
   "keywords": [
     "papertrade",
@@ -33,7 +35,12 @@
     "web3",
     "typescript",
     "cloudflare-pages",
-    "leverage-trading"
+    "leverage-trading",
+    "mcp",
+    "model-context-protocol",
+    "mcp-server",
+    "ai-agents",
+    "llms-txt"
   ],
   "repository": {
     "type": "git",
@@ -52,6 +59,7 @@
     "@cloudflare/workers-types": "^5.20261010.1",
     "@types/node": "^26.6.5",
     "esbuild": "^0.28.2",
+    "marked": "^15.0.12",
     "typescript": "^7.0.2",
     "vitest": "^5.0.3",
     "wrangler": "^4.149.0"
@@ -59,5 +67,6 @@
   "allowScripts": {
     "workerd@1.20261006.1": true,
     "esbuild@0.28.2": true
-  }
+  },
+  "mcpName": "io.github.nirholas/papertrade-terminal"
 }

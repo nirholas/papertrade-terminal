@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Security and limits - Papertrade Terminal Docs</title>
+<meta name="description" content="What Papertrade Terminal can and cannot do - non-custodial design, the read-only MCP server, CSP and framing, rate limits, body and batch caps, and untrusted data handling.">
+<link rel="canonical" href="https://papertrade-terminal.pages.dev/docs/security/">
+<link rel="alternate" type="text/markdown" href="https://papertrade-terminal.pages.dev/docs/security.md">
+<meta name="color-scheme" content="dark light">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Papertrade Terminal Docs">
+<meta property="og:title" content="Security and limits - Papertrade Terminal Docs">
+<meta property="og:description" content="What Papertrade Terminal can and cannot do - non-custodial design, the read-only MCP server, CSP and framing, rate limits, body and batch caps, and untrusted data handling.">
+<meta property="og:url" content="https://papertrade-terminal.pages.dev/docs/security/">
+<meta name="twitter:card" content="summary">
+<meta name="robots" content="index, follow">
+<link rel="stylesheet" href="/docs/docs.css">
+<script src="/docs/docs.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="top">
+  <button class="icon-btn menu-btn" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+  <a class="brand" href="/docs/"><span class="brand-mark" aria-hidden="true">PT</span><span class="brand-name">Papertrade Terminal<span class="brand-sub">Docs</span></span></a>
+  <div class="search" role="search">
+    <label class="visually-hidden" for="doc-search">Search the docs</label>
+    <input id="doc-search" type="search" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-controls="search-results" aria-expanded="false">
+    <kbd class="search-key" aria-hidden="true">/</kbd>
+    <ul id="search-results" class="search-results" role="listbox" aria-label="Search results" hidden></ul>
+  </div>
+  <a class="top-link" href="/app/">Open terminal</a>
+  <button class="icon-btn theme-btn" type="button" aria-label="Toggle light and dark theme">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+  </button>
+</header>
+<div class="scrim" hidden></div>
+<div class="layout">
+  <aside id="sidebar" class="sidebar" aria-label="Documentation">
+    <nav aria-label="Pages"><ul><li><a href="/docs/">Overview</a></li><li><a href="/docs/quickstart/">Quickstart</a></li><li><a href="/docs/concepts/">Concepts</a></li><li><a href="/docs/reference/">Reference</a></li><li><a href="/docs/mcp/">MCP server</a></li><li><a href="/docs/connect-your-ai/">Connect your AI</a></li><li><a href="/docs/agent-discovery/">Agent discovery</a></li><li><a href="/docs/self-hosting/">Self-hosting</a></li><li><a href="/docs/security/" aria-current="page">Security and limits</a></li><li><a href="/docs/faq/">FAQ</a></li><li><a href="/docs/changelog/">Changelog</a></li></ul></nav>
+    <p class="sidebar-note">Unofficial, not affiliated with Papertrade. High leverage can lose your whole margin.</p>
+  </aside>
+  <main id="content" class="content" tabindex="-1">
+    <article class="doc">
+      <p class="doc-actions"><a href="/docs/security.md">View as markdown</a></p>
+<h1 id="security-and-limits">Security and limits<a class="anchor" href="#security-and-limits" aria-label="Link to Security and limits">#</a></h1>
+<blockquote>
+<p>Unofficial, not affiliated with Papertrade. Papertrade allows up to 1000x leverage and a small move can liquidate the whole margin. Use at your own risk.</p>
+</blockquote>
+<h2 id="non-custodial">Non-custodial<a class="anchor" href="#non-custodial" aria-label="Link to Non-custodial">#</a></h2>
+<ul>
+<li>The terminal never sees your wallet key. Signing happens in your injected wallet (EIP-6963 or <code>window.ethereum</code>).</li>
+<li>One wallet signature registers a session key. The key is generated in your browser and stored in <code>localStorage</code>. It can open, close and cancel positions and <strong>can never withdraw</strong>. Withdrawals, staking and claims need a fresh wallet signature.</li>
+<li>The proxy and the MCP server hold no keys, no cookies and no secrets, and they sign nothing.</li>
+<li>Every transaction (deposit, withdrawal, approve, swap) is shown with its details and signed by your wallet.</li>
+</ul>
+<h2 id="the-mcp-server-is-read-only">The MCP server is read-only<a class="anchor" href="#the-mcp-server-is-read-only" aria-label="Link to The MCP server is read-only">#</a></h2>
+<p>All nine tools are annotated <code>readOnlyHint: true</code>. They read public Papertrade or Hyperliquid data, or compute quotes locally with the SDK. <code>build_trade_plan</code> returns an <strong>unsigned</strong> plan and a deep link. Opening the link fills a form in the terminal. You still review the confirmation dialog and sign yourself. <code>get_wallet_positions</code> needs only a public address and cannot act on the account.</p>
+<h2 id="limits">Limits<a class="anchor" href="#limits" aria-label="Link to Limits">#</a></h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Table"><table>
+<thead>
+<tr>
+<th>Limit</th>
+<th>Value</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MCP requests</td>
+<td>60 per minute per IP, answered with HTTP <code>429</code>, JSON-RPC <code>-32029</code> and <code>Retry-After</code></td>
+<td><code>/mcp</code></td>
+</tr>
+<tr>
+<td>MCP request body</td>
+<td>64 KB (<code>413</code> beyond that)</td>
+<td><code>/mcp</code></td>
+</tr>
+<tr>
+<td>MCP batch size</td>
+<td>20 calls (<code>400</code> beyond that)</td>
+<td><code>/mcp</code></td>
+</tr>
+<tr>
+<td>Proxy POST body</td>
+<td>64 KB (<code>413 body_too_large</code>)</td>
+<td><code>/api/papertrade/*</code></td>
+</tr>
+<tr>
+<td>Upstream timeout</td>
+<td>8 seconds, one retry</td>
+<td>MCP tools</td>
+</tr>
+<tr>
+<td>Wallet positions returned</td>
+<td>50</td>
+<td><code>get_wallet_positions</code></td>
+</tr>
+<tr>
+<td>Recent trades returned</td>
+<td>50</td>
+<td><code>get_recent_trades</code></td>
+</tr>
+<tr>
+<td>Candles returned</td>
+<td>200</td>
+<td><code>get_candles</code></td>
+</tr>
+<tr>
+<td>Operator notices returned</td>
+<td>5</td>
+<td><code>get_protocol_status</code></td>
+</tr>
+<tr>
+<td>Close batch</td>
+<td>12 positions per intent</td>
+<td>terminal</td>
+</tr>
+</tbody></table></div>
+<p>The rate limiter is held in isolate memory, so it is a best-effort guard rather than a global counter.</p>
+<h2 id="untrusted-data">Untrusted data<a class="anchor" href="#untrusted-data" aria-label="Link to Untrusted data">#</a></h2>
+<p>Operator notices, market and wallet names, token symbols, memos and error text all come from outside this project. The terminal escapes every such string before it reaches the DOM. The MCP server tells models that this text is data, never instructions, and <code>get_protocol_status</code> truncates notices (titles to 200 characters, bodies to 600). Do not let any value that came from on-chain or API text decide to spend, sign or transfer.</p>
+<h2 id="content-security-policy-and-headers">Content Security Policy and headers<a class="anchor" href="#content-security-policy-and-headers" aria-label="Link to Content Security Policy and headers">#</a></h2>
+<p>The site sets a strict CSP in <code>site/public/_headers</code>:</p>
+<ul>
+<li><code>script-src &#39;self&#39;</code> plus the TradingView script host, and <code>style-src &#39;self&#39;</code>. There are no inline scripts or styles, which includes the docs pages (their CSS and JS are separate files).</li>
+<li><code>object-src &#39;none&#39;</code>, <code>base-uri &#39;none&#39;</code>, <code>form-action &#39;self&#39;</code>.</li>
+<li><code>connect-src</code> allows only the origins the app calls: Hyperliquid, the HyperEVM RPC, KyberSwap, GeckoTerminal and TradingView.</li>
+<li><code>X-Content-Type-Options: nosniff</code>, a strict referrer policy and a locked-down Permissions-Policy.</li>
+<li><code>frame-ancestors</code>: the app route allows framing only by itself, the Papertrade OS (<code>https://papertrade-os.pages.dev</code>) and other <code>*.pages.dev</code> origins so it can run as a window there. Other routes use <code>frame-ancestors &#39;none&#39;</code>.</li>
+</ul>
+<h2 id="cors-and-origin">CORS and origin<a class="anchor" href="#cors-and-origin" aria-label="Link to CORS and origin">#</a></h2>
+<p>The MCP endpoint sends <code>Access-Control-Allow-Origin: *</code>. It uses no cookies and no credentials, so there is nothing for a hostile origin to ride on, and the <code>Origin</code> header is never used for authorisation.</p>
+<h2 id="reporting-a-vulnerability">Reporting a vulnerability<a class="anchor" href="#reporting-a-vulnerability" aria-label="Link to Reporting a vulnerability">#</a></h2>
+<p>See <a href="https://github.com/nirholas/papertrade-terminal/blob/main/SECURITY.md">SECURITY.md</a> in the repository. Never post private keys, session keys or seed phrases in an issue.</p>
+
+      <nav class="pager" aria-label="Previous and next page"><a class="pager-prev" href="/docs/self-hosting/" rel="prev"><span>Previous</span>Self-hosting</a><a class="pager-next" href="/docs/faq/" rel="next"><span>Next</span>FAQ</a></nav>
+    </article>
+    <footer class="foot">
+      <p>Unofficial, not affiliated with Papertrade. Papertrade allows up to 1000x leverage and a small move against a position can liquidate the whole margin. Not financial advice.</p>
+      <p><a href="/">Home</a> <a href="/app/">Terminal</a> <a href="/llms.txt">llms.txt</a> <a href="/mcp">MCP</a> <a href="https://github.com/nirholas/papertrade-terminal">GitHub</a> Apache-2.0</p>
+    </footer>
+  </main>
+  <aside class="toc-col" aria-label="Table of contents"><nav class="toc" aria-label="On this page"><p class="toc-title">On this page</p><ul><li class="toc-2"><a href="#non-custodial">Non-custodial</a></li><li class="toc-2"><a href="#the-mcp-server-is-read-only">The MCP server is read-only</a></li><li class="toc-2"><a href="#limits">Limits</a></li><li class="toc-2"><a href="#untrusted-data">Untrusted data</a></li><li class="toc-2"><a href="#content-security-policy-and-headers">Content Security Policy and headers</a></li><li class="toc-2"><a href="#cors-and-origin">CORS and origin</a></li><li class="toc-2"><a href="#reporting-a-vulnerability">Reporting a vulnerability</a></li></ul></nav></aside>
+</div>
+</body>
+</html>

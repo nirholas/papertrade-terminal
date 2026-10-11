@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FAQ - Papertrade Terminal Docs</title>
+<meta name="description" content="Answers about custody, session keys, the MCP server, deep links, fees, liquidation, supported wallets and why an assistant cannot place trades.">
+<link rel="canonical" href="https://papertrade-terminal.pages.dev/docs/faq/">
+<link rel="alternate" type="text/markdown" href="https://papertrade-terminal.pages.dev/docs/faq.md">
+<meta name="color-scheme" content="dark light">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Papertrade Terminal Docs">
+<meta property="og:title" content="FAQ - Papertrade Terminal Docs">
+<meta property="og:description" content="Answers about custody, session keys, the MCP server, deep links, fees, liquidation, supported wallets and why an assistant cannot place trades.">
+<meta property="og:url" content="https://papertrade-terminal.pages.dev/docs/faq/">
+<meta name="twitter:card" content="summary">
+<meta name="robots" content="index, follow">
+<link rel="stylesheet" href="/docs/docs.css">
+<script src="/docs/docs.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="top">
+  <button class="icon-btn menu-btn" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+  <a class="brand" href="/docs/"><span class="brand-mark" aria-hidden="true">PT</span><span class="brand-name">Papertrade Terminal<span class="brand-sub">Docs</span></span></a>
+  <div class="search" role="search">
+    <label class="visually-hidden" for="doc-search">Search the docs</label>
+    <input id="doc-search" type="search" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-controls="search-results" aria-expanded="false">
+    <kbd class="search-key" aria-hidden="true">/</kbd>
+    <ul id="search-results" class="search-results" role="listbox" aria-label="Search results" hidden></ul>
+  </div>
+  <a class="top-link" href="/app/">Open terminal</a>
+  <button class="icon-btn theme-btn" type="button" aria-label="Toggle light and dark theme">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+  </button>
+</header>
+<div class="scrim" hidden></div>
+<div class="layout">
+  <aside id="sidebar" class="sidebar" aria-label="Documentation">
+    <nav aria-label="Pages"><ul><li><a href="/docs/">Overview</a></li><li><a href="/docs/quickstart/">Quickstart</a></li><li><a href="/docs/concepts/">Concepts</a></li><li><a href="/docs/reference/">Reference</a></li><li><a href="/docs/mcp/">MCP server</a></li><li><a href="/docs/connect-your-ai/">Connect your AI</a></li><li><a href="/docs/agent-discovery/">Agent discovery</a></li><li><a href="/docs/self-hosting/">Self-hosting</a></li><li><a href="/docs/security/">Security and limits</a></li><li><a href="/docs/faq/" aria-current="page">FAQ</a></li><li><a href="/docs/changelog/">Changelog</a></li></ul></nav>
+    <p class="sidebar-note">Unofficial, not affiliated with Papertrade. High leverage can lose your whole margin.</p>
+  </aside>
+  <main id="content" class="content" tabindex="-1">
+    <article class="doc">
+      <p class="doc-actions"><a href="/docs/faq.md">View as markdown</a></p>
+<h1 id="faq">FAQ<a class="anchor" href="#faq" aria-label="Link to FAQ">#</a></h1>
+<h2 id="is-this-official">Is this official?<a class="anchor" href="#is-this-official" aria-label="Link to Is this official?">#</a></h2>
+<p>No. Papertrade Terminal is an unofficial community project and is not affiliated with Papertrade. It uses Papertrade&#39;s public API and verified protocol math through papertrade-sdk.</p>
+<h2 id="can-it-take-my-funds">Can it take my funds?<a class="anchor" href="#can-it-take-my-funds" aria-label="Link to Can it take my funds?">#</a></h2>
+<p>No. It is non-custodial. Your wallet signs everything that moves funds. The session key stored in your browser can trade but can never withdraw.</p>
+<h2 id="can-an-ai-assistant-place-trades-for-me">Can an AI assistant place trades for me?<a class="anchor" href="#can-an-ai-assistant-place-trades-for-me" aria-label="Link to Can an AI assistant place trades for me?">#</a></h2>
+<p>No. The MCP server is read-only. An assistant can quote a trade and call <code>build_trade_plan</code>, which returns an unsigned plan and a link. You open the link, connect your wallet, review the confirmation and sign.</p>
+<h2 id="what-does-the-deep-link-do">What does the deep link do?<a class="anchor" href="#what-does-the-deep-link-do" aria-label="Link to What does the deep link do?">#</a></h2>
+<p><code>https://papertrade-terminal.pages.dev/?market=BTC&amp;side=long&amp;margin=50&amp;leverage=10</code> opens the terminal with the ticket prefilled and a review banner. It only fills a form. See <a href="/docs/reference/#deep-link-parameters">reference</a>.</p>
+<h2 id="how-risky-is-1000x-leverage">How risky is 1000x leverage?<a class="anchor" href="#how-risky-is-1000x-leverage" aria-label="Link to How risky is 1000x leverage?">#</a></h2>
+<p>Very. At 1000x a move of roughly a tenth of a percent against you reaches the bust price and the full margin is lost. The pre-trade panel and the <code>quote_leverage_ladder</code> tool show the exact bust price for each leverage step. This is not financial advice.</p>
+<h2 id="what-are-the-fees">What are the fees?<a class="anchor" href="#what-are-the-fees" aria-label="Link to What are the fees?">#</a></h2>
+<p>A 2% fee on winning closes, after the deadband and impact haircut. Losses pay no fee. The first deposit pays a 1 USDC activation fee, and withdrawals show their own fee and minimum. HYPE gas is needed for deposits, approvals and swaps. See <a href="/docs/concepts/">concepts</a>.</p>
+<h2 id="why-is-my-order-not-filled-instantly">Why is my order not filled instantly?<a class="anchor" href="#why-is-my-order-not-filled-instantly" aria-label="Link to Why is my order not filled instantly?">#</a></h2>
+<p>Orders are signed intents that go into the relayer queue and fill at the mark when processed. Watch the Pending list. You can cancel while the intent is still queued.</p>
+<h2 id="why-did-the-relayer-reject-my-order">Why did the relayer reject my order?<a class="anchor" href="#why-did-the-relayer-reject-my-order" aria-label="Link to Why did the relayer reject my order?">#</a></h2>
+<p>Common reasons: margin below the minimum, notional outside the allowed range, a per-side open interest cap reached, the market paused or close-only, or no active session key. <code>quote_open_position</code> returns <code>valid: false</code> with the reason before you try, and <code>get_protocol_status</code> shows pauses and operator notices.</p>
+<h2 id="which-wallets-work">Which wallets work?<a class="anchor" href="#which-wallets-work" aria-label="Link to Which wallets work?">#</a></h2>
+<p>Any wallet that injects an EIP-1193 provider. The terminal discovers wallets with EIP-6963 and falls back to <code>window.ethereum</code>. It switches to or adds HyperEVM (chain 999).</p>
+<h2 id="how-long-does-a-session-key-last">How long does a session key last?<a class="anchor" href="#how-long-does-a-session-key-last" aria-label="Link to How long does a session key last?">#</a></h2>
+<p>30 days. The terminal shows the expiry and asks you to re-register when it lapses. Clear it any time from the Trade tab.</p>
+<h2 id="does-the-mcp-server-need-an-api-key">Does the MCP server need an API key?<a class="anchor" href="#does-the-mcp-server-need-an-api-key" aria-label="Link to Does the MCP server need an API key?">#</a></h2>
+<p>No. There is no authentication. It is rate limited to 60 requests per minute per IP.</p>
+<h2 id="which-ai-clients-work">Which AI clients work?<a class="anchor" href="#which-ai-clients-work" aria-label="Link to Which AI clients work?">#</a></h2>
+<p>Anything that supports MCP over Streamable HTTP: Claude, Codex, ChatGPT developer mode, Gemini CLI, Cursor, VS Code, Windsurf, Zed, Cline, Goose and Continue. Clients without MCP can use the OpenAPI spec. See <a href="/docs/connect-your-ai/">Connect your AI</a>.</p>
+<h2 id="can-i-embed-the-terminal">Can I embed the terminal?<a class="anchor" href="#can-i-embed-the-terminal" aria-label="Link to Can I embed the terminal?">#</a></h2>
+<p>Yes. Add <code>?embed=1</code> to hide marketing chrome. The app route allows framing by the Papertrade OS and other <code>*.pages.dev</code> hosts. See <a href="/docs/security/">security</a>.</p>
+<h2 id="can-i-run-my-own-copy">Can I run my own copy?<a class="anchor" href="#can-i-run-my-own-copy" aria-label="Link to Can I run my own copy?">#</a></h2>
+<p>Yes, on Cloudflare Pages. See <a href="/docs/self-hosting/">self-hosting</a>.</p>
+<h2 id="where-do-i-report-a-problem">Where do I report a problem?<a class="anchor" href="#where-do-i-report-a-problem" aria-label="Link to Where do I report a problem?">#</a></h2>
+<p>Open an issue at <a href="https://github.com/nirholas/papertrade-terminal/issues">github.com/nirholas/papertrade-terminal/issues</a>. Security issues go through SECURITY.md.</p>
+
+      <nav class="pager" aria-label="Previous and next page"><a class="pager-prev" href="/docs/security/" rel="prev"><span>Previous</span>Security and limits</a><a class="pager-next" href="/docs/changelog/" rel="next"><span>Next</span>Changelog</a></nav>
+    </article>
+    <footer class="foot">
+      <p>Unofficial, not affiliated with Papertrade. Papertrade allows up to 1000x leverage and a small move against a position can liquidate the whole margin. Not financial advice.</p>
+      <p><a href="/">Home</a> <a href="/app/">Terminal</a> <a href="/llms.txt">llms.txt</a> <a href="/mcp">MCP</a> <a href="https://github.com/nirholas/papertrade-terminal">GitHub</a> Apache-2.0</p>
+    </footer>
+  </main>
+  <aside class="toc-col" aria-label="Table of contents"><nav class="toc" aria-label="On this page"><p class="toc-title">On this page</p><ul><li class="toc-2"><a href="#is-this-official">Is this official?</a></li><li class="toc-2"><a href="#can-it-take-my-funds">Can it take my funds?</a></li><li class="toc-2"><a href="#can-an-ai-assistant-place-trades-for-me">Can an AI assistant place trades for me?</a></li><li class="toc-2"><a href="#what-does-the-deep-link-do">What does the deep link do?</a></li><li class="toc-2"><a href="#how-risky-is-1000x-leverage">How risky is 1000x leverage?</a></li><li class="toc-2"><a href="#what-are-the-fees">What are the fees?</a></li><li class="toc-2"><a href="#why-is-my-order-not-filled-instantly">Why is my order not filled instantly?</a></li><li class="toc-2"><a href="#why-did-the-relayer-reject-my-order">Why did the relayer reject my order?</a></li><li class="toc-2"><a href="#which-wallets-work">Which wallets work?</a></li><li class="toc-2"><a href="#how-long-does-a-session-key-last">How long does a session key last?</a></li><li class="toc-2"><a href="#does-the-mcp-server-need-an-api-key">Does the MCP server need an API key?</a></li><li class="toc-2"><a href="#which-ai-clients-work">Which AI clients work?</a></li><li class="toc-2"><a href="#can-i-embed-the-terminal">Can I embed the terminal?</a></li><li class="toc-2"><a href="#can-i-run-my-own-copy">Can I run my own copy?</a></li><li class="toc-2"><a href="#where-do-i-report-a-problem">Where do I report a problem?</a></li></ul></nav></aside>
+</div>
+</body>
+</html>

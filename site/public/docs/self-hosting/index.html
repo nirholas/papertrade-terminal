@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Self-hosting - Papertrade Terminal Docs</title>
+<meta name="description" content="Build and deploy your own copy of Papertrade Terminal and its MCP server to Cloudflare Pages with wrangler.">
+<link rel="canonical" href="https://papertrade-terminal.pages.dev/docs/self-hosting/">
+<link rel="alternate" type="text/markdown" href="https://papertrade-terminal.pages.dev/docs/self-hosting.md">
+<meta name="color-scheme" content="dark light">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Papertrade Terminal Docs">
+<meta property="og:title" content="Self-hosting - Papertrade Terminal Docs">
+<meta property="og:description" content="Build and deploy your own copy of Papertrade Terminal and its MCP server to Cloudflare Pages with wrangler.">
+<meta property="og:url" content="https://papertrade-terminal.pages.dev/docs/self-hosting/">
+<meta name="twitter:card" content="summary">
+<meta name="robots" content="index, follow">
+<link rel="stylesheet" href="/docs/docs.css">
+<script src="/docs/docs.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="top">
+  <button class="icon-btn menu-btn" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+  <a class="brand" href="/docs/"><span class="brand-mark" aria-hidden="true">PT</span><span class="brand-name">Papertrade Terminal<span class="brand-sub">Docs</span></span></a>
+  <div class="search" role="search">
+    <label class="visually-hidden" for="doc-search">Search the docs</label>
+    <input id="doc-search" type="search" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-controls="search-results" aria-expanded="false">
+    <kbd class="search-key" aria-hidden="true">/</kbd>
+    <ul id="search-results" class="search-results" role="listbox" aria-label="Search results" hidden></ul>
+  </div>
+  <a class="top-link" href="/app/">Open terminal</a>
+  <button class="icon-btn theme-btn" type="button" aria-label="Toggle light and dark theme">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+  </button>
+</header>
+<div class="scrim" hidden></div>
+<div class="layout">
+  <aside id="sidebar" class="sidebar" aria-label="Documentation">
+    <nav aria-label="Pages"><ul><li><a href="/docs/">Overview</a></li><li><a href="/docs/quickstart/">Quickstart</a></li><li><a href="/docs/concepts/">Concepts</a></li><li><a href="/docs/reference/">Reference</a></li><li><a href="/docs/mcp/">MCP server</a></li><li><a href="/docs/connect-your-ai/">Connect your AI</a></li><li><a href="/docs/agent-discovery/">Agent discovery</a></li><li><a href="/docs/self-hosting/" aria-current="page">Self-hosting</a></li><li><a href="/docs/security/">Security and limits</a></li><li><a href="/docs/faq/">FAQ</a></li><li><a href="/docs/changelog/">Changelog</a></li></ul></nav>
+    <p class="sidebar-note">Unofficial, not affiliated with Papertrade. High leverage can lose your whole margin.</p>
+  </aside>
+  <main id="content" class="content" tabindex="-1">
+    <article class="doc">
+      <p class="doc-actions"><a href="/docs/self-hosting.md">View as markdown</a></p>
+<h1 id="self-hosting">Self-hosting<a class="anchor" href="#self-hosting" aria-label="Link to Self-hosting">#</a></h1>
+<p>Papertrade Terminal is a static site plus Cloudflare Pages Functions, so it runs on the Cloudflare free tier. You need Node.js 20 or newer, a Cloudflare account, and the <code>papertrade-sdk</code> tarball (the SDK is not on npm yet).</p>
+<h2 id="layout">Layout<a class="anchor" href="#layout" aria-label="Link to Layout">#</a></h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Table"><table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>site/public</code></td>
+<td>Static output: landing page, <code>app/</code>, <code>app.js</code>, <code>chunks/</code>, <code>docs/</code>, discovery files, <code>_headers</code>, <code>_routes.json</code></td>
+</tr>
+<tr>
+<td><code>site/functions/mcp.ts</code></td>
+<td>MCP endpoint (<code>/mcp</code>)</td>
+</tr>
+<tr>
+<td><code>site/functions/api/papertrade/[[path]].ts</code></td>
+<td>Same-origin API proxy</td>
+</tr>
+<tr>
+<td><code>site/functions/_lib/</code></td>
+<td>MCP plumbing (<code>mcp.ts</code>) and the nine tools (<code>tools.ts</code>)</td>
+</tr>
+<tr>
+<td><code>site/wrangler.toml</code></td>
+<td>Pages project config</td>
+</tr>
+<tr>
+<td><code>docs/</code></td>
+<td>Markdown source for the docs site</td>
+</tr>
+</tbody></table></div>
+<h2 id="wranglertoml">wrangler.toml<a class="anchor" href="#wranglertoml" aria-label="Link to wrangler.toml">#</a></h2>
+<div class="code"><span class="code-lang">toml</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-toml">name = &quot;papertrade-terminal&quot;
+compatibility_date = &quot;2026-10-01&quot;
+pages_build_output_dir = &quot;public&quot;
+
+[vars]
+PAPERTRADE_API_URL = &quot;https://exchange.papertrade.xyz&quot;</code></pre></div>
+<p><code>PAPERTRADE_API_URL</code> is optional. Change it to point both the proxy and the MCP tools at a different Papertrade API origin.</p>
+<h2 id="build">Build<a class="anchor" href="#build" aria-label="Link to Build">#</a></h2>
+<div class="code"><span class="code-lang">sh</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-sh">npm install ../papertrade-sdk-0.1.0.tgz viem
+npm install
+npm run build:site</code></pre></div>
+<p><code>build:site</code> runs <code>node scripts/build-docs.mjs</code> first (docs HTML, markdown twins, <code>search-index.json</code>, <code>llms.txt</code>, <code>llms-full.txt</code>, <code>sitemap.xml</code>), then <code>node scripts/build-site.mjs</code> (esbuild bundle with code splitting into <code>site/public/app.js</code> and <code>chunks/</code>). Use <code>npm run build:docs</code> to rebuild only the docs.</p>
+<h2 id="run-locally">Run locally<a class="anchor" href="#run-locally" aria-label="Link to Run locally">#</a></h2>
+<div class="code"><span class="code-lang">sh</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-sh">npm run dev:site</code></pre></div>
+<p>This builds and then serves <code>site/public</code> with the Functions through <code>wrangler pages dev</code> on <a href="http://localhost:8788">http://localhost:8788</a>. Put overrides such as <code>PAPERTRADE_API_URL=...</code> in <code>site/.dev.vars</code>.</p>
+<h2 id="deploy">Deploy<a class="anchor" href="#deploy" aria-label="Link to Deploy">#</a></h2>
+<div class="code"><span class="code-lang">sh</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-sh">npm run build:site
+cd site
+npx wrangler pages deploy public --project-name &lt;your-project&gt; --branch main</code></pre></div>
+<p>Or <code>npm run deploy:site</code>, which builds and runs <code>wrangler pages deploy</code> from <code>site/</code> using the name in <code>wrangler.toml</code>. Run wrangler from inside <code>site/</code>. The first deploy creates the Pages project. Authenticate with <code>wrangler login</code>, or set <code>CLOUDFLARE_API_TOKEN</code> and <code>CLOUDFLARE_ACCOUNT_ID</code>.</p>
+<h2 id="routing">Routing<a class="anchor" href="#routing" aria-label="Link to Routing">#</a></h2>
+<p><code>site/public/_routes.json</code> lists the paths that invoke Functions (<code>/mcp</code>, <code>/api/*</code> and the landing route), so static files and docs are served directly and cost no Function invocations. <code>_headers</code> sets the CSP, security headers, caching and CORS for the discovery files.</p>
+<h2 id="after-deploying">After deploying<a class="anchor" href="#after-deploying" aria-label="Link to After deploying">#</a></h2>
+<div class="code"><span class="code-lang">sh</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-sh">curl -s -X POST https://&lt;your-project&gt;.pages.dev/mcp \
+  -H 'content-type: application/json' \
+  -d '{&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;id&quot;:1,&quot;method&quot;:&quot;tools/list&quot;}'</code></pre></div>
+<p>Then check <code>/docs/</code>, <code>/llms.txt</code> and <code>/.well-known/mcp/server-card.json</code>. If you host under your own domain, update the absolute URLs that carry <code>https://papertrade-terminal.pages.dev</code> (the docs build constants, <code>server.json</code> and the discovery files) so canonical links and the server card point at your origin.</p>
+<h2 id="rate-limiting-note">Rate limiting note<a class="anchor" href="#rate-limiting-note" aria-label="Link to Rate limiting note">#</a></h2>
+<p>The MCP limiter (60 requests per minute per IP) lives in isolate memory, so it is best effort per Cloudflare isolate. For a hard global limit add a Cloudflare rate limiting rule on <code>/mcp</code> in your zone.</p>
+<blockquote>
+<p>Unofficial, not affiliated with Papertrade. Papertrade allows up to 1000x leverage and a small move can lose the whole margin. Apache-2.0.</p>
+</blockquote>
+
+      <nav class="pager" aria-label="Previous and next page"><a class="pager-prev" href="/docs/agent-discovery/" rel="prev"><span>Previous</span>Agent discovery</a><a class="pager-next" href="/docs/security/" rel="next"><span>Next</span>Security and limits</a></nav>
+    </article>
+    <footer class="foot">
+      <p>Unofficial, not affiliated with Papertrade. Papertrade allows up to 1000x leverage and a small move against a position can liquidate the whole margin. Not financial advice.</p>
+      <p><a href="/">Home</a> <a href="/app/">Terminal</a> <a href="/llms.txt">llms.txt</a> <a href="/mcp">MCP</a> <a href="https://github.com/nirholas/papertrade-terminal">GitHub</a> Apache-2.0</p>
+    </footer>
+  </main>
+  <aside class="toc-col" aria-label="Table of contents"><nav class="toc" aria-label="On this page"><p class="toc-title">On this page</p><ul><li class="toc-2"><a href="#layout">Layout</a></li><li class="toc-2"><a href="#wranglertoml">wrangler.toml</a></li><li class="toc-2"><a href="#build">Build</a></li><li class="toc-2"><a href="#run-locally">Run locally</a></li><li class="toc-2"><a href="#deploy">Deploy</a></li><li class="toc-2"><a href="#routing">Routing</a></li><li class="toc-2"><a href="#after-deploying">After deploying</a></li><li class="toc-2"><a href="#rate-limiting-note">Rate limiting note</a></li></ul></nav></aside>
+</div>
+</body>
+</html>

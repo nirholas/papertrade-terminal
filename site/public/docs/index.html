@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Papertrade Terminal Docs</title>
+<meta name="description" content="Papertrade Terminal is an unofficial, non-custodial web terminal and read-only MCP server for Papertrade perps on HyperEVM.">
+<link rel="canonical" href="https://papertrade-terminal.pages.dev/docs/">
+<link rel="alternate" type="text/markdown" href="https://papertrade-terminal.pages.dev/docs/index.md">
+<meta name="color-scheme" content="dark light">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Papertrade Terminal Docs">
+<meta property="og:title" content="Papertrade Terminal Docs">
+<meta property="og:description" content="Papertrade Terminal is an unofficial, non-custodial web terminal and read-only MCP server for Papertrade perps on HyperEVM.">
+<meta property="og:url" content="https://papertrade-terminal.pages.dev/docs/">
+<meta name="twitter:card" content="summary">
+<meta name="robots" content="index, follow">
+<link rel="stylesheet" href="/docs/docs.css">
+<script src="/docs/docs.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="top">
+  <button class="icon-btn menu-btn" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+  <a class="brand" href="/docs/"><span class="brand-mark" aria-hidden="true">PT</span><span class="brand-name">Papertrade Terminal<span class="brand-sub">Docs</span></span></a>
+  <div class="search" role="search">
+    <label class="visually-hidden" for="doc-search">Search the docs</label>
+    <input id="doc-search" type="search" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-controls="search-results" aria-expanded="false">
+    <kbd class="search-key" aria-hidden="true">/</kbd>
+    <ul id="search-results" class="search-results" role="listbox" aria-label="Search results" hidden></ul>
+  </div>
+  <a class="top-link" href="/app/">Open terminal</a>
+  <button class="icon-btn theme-btn" type="button" aria-label="Toggle light and dark theme">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+  </button>
+</header>
+<div class="scrim" hidden></div>
+<div class="layout">
+  <aside id="sidebar" class="sidebar" aria-label="Documentation">
+    <nav aria-label="Pages"><ul><li><a href="/docs/" aria-current="page">Overview</a></li><li><a href="/docs/quickstart/">Quickstart</a></li><li><a href="/docs/concepts/">Concepts</a></li><li><a href="/docs/reference/">Reference</a></li><li><a href="/docs/mcp/">MCP server</a></li><li><a href="/docs/connect-your-ai/">Connect your AI</a></li><li><a href="/docs/agent-discovery/">Agent discovery</a></li><li><a href="/docs/self-hosting/">Self-hosting</a></li><li><a href="/docs/security/">Security and limits</a></li><li><a href="/docs/faq/">FAQ</a></li><li><a href="/docs/changelog/">Changelog</a></li></ul></nav>
+    <p class="sidebar-note">Unofficial, not affiliated with Papertrade. High leverage can lose your whole margin.</p>
+  </aside>
+  <main id="content" class="content" tabindex="-1">
+    <article class="doc">
+      <p class="doc-actions"><a href="/docs/index.md">View as markdown</a></p>
+<h1 id="papertrade-terminal">Papertrade Terminal<a class="anchor" href="#papertrade-terminal" aria-label="Link to Papertrade Terminal">#</a></h1>
+<p>Papertrade Terminal is an unofficial, non-custodial trading terminal for <a href="https://papertrade.xyz">Papertrade</a>, the fully on-chain synthetic perpetuals exchange on Hyperliquid&#39;s HyperEVM (chain 999). It ships as a static app plus a few small Cloudflare Pages Functions, and it also exposes a <strong>read-only MCP server</strong> so AI assistants can quote trades and hand you a prefilled order ticket.</p>
+<blockquote>
+<p><strong>Unofficial, not affiliated with Papertrade.</strong> Papertrade allows up to 1000x leverage. A small move against a position liquidates it and the whole margin is lost. Nothing here is financial advice. Review every confirmation dialog before you sign.</p>
+</blockquote>
+<h2 id="what-you-get">What you get<a class="anchor" href="#what-you-get" aria-label="Link to What you get">#</a></h2>
+<ul>
+<li><strong>A browser terminal</strong> at <a href="/app/">/app/</a>: candle chart, order ticket, positions, history, pending orders, deposit and withdraw, and a KyberSwap swap. Wallet keys never touch the page. See the <a href="/docs/reference/">reference</a>.</li>
+<li><strong>A session key model.</strong> You sign one <code>RegisterSessionKey</code> message with your own wallet. After that a key stored in your browser signs orders. That key can open and close positions but can never withdraw. See <a href="/docs/concepts/">concepts</a>.</li>
+<li><strong>A read-only MCP server</strong> at <code>https://papertrade-terminal.pages.dev/mcp</code> with nine tools: market data, exact quotes, wallet snapshots and unsigned trade plans. See the <a href="/docs/mcp/">MCP page</a>.</li>
+<li><strong>Deep links</strong> that open the terminal with a trade prefilled, for example <code>https://papertrade-terminal.pages.dev/?market=BTC&amp;side=long&amp;margin=50&amp;leverage=10</code>. The link only fills a form. You still review and sign in your own wallet.</li>
+<li><strong>Agent discovery files</strong>: <code>llms.txt</code>, <code>llms-full.txt</code>, <code>openapi.json</code>, an MCP server card and an A2A agent card. See <a href="/docs/agent-discovery/">agent discovery</a>.</li>
+</ul>
+<h2 id="how-the-pieces-fit">How the pieces fit<a class="anchor" href="#how-the-pieces-fit" aria-label="Link to How the pieces fit">#</a></h2>
+<div class="code"><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code>browser (app.js)          AI assistant (Claude, Codex, ChatGPT, Gemini, Cursor ...)
+   |                              |
+   | /api/papertrade/*            | POST /mcp  (JSON-RPC, read-only tools)
+   v                              v
+Cloudflare Pages Functions  -----&gt;  exchange.papertrade.xyz  (public Papertrade API)
+                                    api.hyperliquid.xyz      (candles)</code></pre></div>
+<p>The proxy and the MCP server hold no keys and sign nothing. An assistant that wants to &quot;place a trade&quot; calls <code>build_trade_plan</code>, receives an unsigned plan and a deep link, and gives that link to you.</p>
+<h2 id="where-to-go-next">Where to go next<a class="anchor" href="#where-to-go-next" aria-label="Link to Where to go next">#</a></h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Table"><table>
+<thead>
+<tr>
+<th>You want to</th>
+<th>Read</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Open the terminal and place a first trade</td>
+<td><a href="/docs/quickstart/">Quickstart</a></td>
+</tr>
+<tr>
+<td>Understand bust price, deadband, haircut and fees</td>
+<td><a href="/docs/concepts/">Concepts</a></td>
+</tr>
+<tr>
+<td>Connect Claude, Codex, ChatGPT, Gemini, Cursor or VS Code</td>
+<td><a href="/docs/connect-your-ai/">Connect your AI</a></td>
+</tr>
+<tr>
+<td>Call the MCP tools directly</td>
+<td><a href="/docs/mcp/">MCP</a></td>
+</tr>
+<tr>
+<td>Run your own copy on Cloudflare</td>
+<td><a href="/docs/self-hosting/">Self-hosting</a></td>
+</tr>
+<tr>
+<td>Know exactly what is protected and limited</td>
+<td><a href="/docs/security/">Security and limits</a></td>
+</tr>
+</tbody></table></div>
+<h2 id="licence-and-source">Licence and source<a class="anchor" href="#licence-and-source" aria-label="Link to Licence and source">#</a></h2>
+<p>Apache-2.0. Source: <a href="https://github.com/nirholas/papertrade-terminal">github.com/nirholas/papertrade-terminal</a>. Built on <a href="https://github.com/nirholas/papertrade-sdk">papertrade-sdk</a>, which supplies every protocol read, signature and settlement formula.</p>
+
+      <nav class="pager" aria-label="Previous and next page"><span></span><a class="pager-next" href="/docs/quickstart/" rel="next"><span>Next</span>Quickstart</a></nav>
+    </article>
+    <footer class="foot">
+      <p>Unofficial, not affiliated with Papertrade. Papertrade allows up to 1000x leverage and a small move against a position can liquidate the whole margin. Not financial advice.</p>
+      <p><a href="/">Home</a> <a href="/app/">Terminal</a> <a href="/llms.txt">llms.txt</a> <a href="/mcp">MCP</a> <a href="https://github.com/nirholas/papertrade-terminal">GitHub</a> Apache-2.0</p>
+    </footer>
+  </main>
+  <aside class="toc-col" aria-label="Table of contents"><nav class="toc" aria-label="On this page"><p class="toc-title">On this page</p><ul><li class="toc-2"><a href="#what-you-get">What you get</a></li><li class="toc-2"><a href="#how-the-pieces-fit">How the pieces fit</a></li><li class="toc-2"><a href="#where-to-go-next">Where to go next</a></li><li class="toc-2"><a href="#licence-and-source">Licence and source</a></li></ul></nav></aside>
+</div>
+</body>
+</html>

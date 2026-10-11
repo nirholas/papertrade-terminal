@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect your AI - Papertrade Terminal Docs</title>
+<meta name="description" content="Copy-paste, verified configuration to add the Papertrade Terminal MCP server to Claude, Codex, ChatGPT, Gemini CLI, Cursor, VS Code, Windsurf, Zed, Cline, Goose, Continue and any agent framework.">
+<link rel="canonical" href="https://papertrade-terminal.pages.dev/docs/connect-your-ai/">
+<link rel="alternate" type="text/markdown" href="https://papertrade-terminal.pages.dev/docs/connect-your-ai.md">
+<meta name="color-scheme" content="dark light">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Papertrade Terminal Docs">
+<meta property="og:title" content="Connect your AI - Papertrade Terminal Docs">
+<meta property="og:description" content="Copy-paste, verified configuration to add the Papertrade Terminal MCP server to Claude, Codex, ChatGPT, Gemini CLI, Cursor, VS Code, Windsurf, Zed, Cline, Goose, Continue and any agent framework.">
+<meta property="og:url" content="https://papertrade-terminal.pages.dev/docs/connect-your-ai/">
+<meta name="twitter:card" content="summary">
+<meta name="robots" content="index, follow">
+<link rel="stylesheet" href="/docs/docs.css">
+<script src="/docs/docs.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="top">
+  <button class="icon-btn menu-btn" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+  <a class="brand" href="/docs/"><span class="brand-mark" aria-hidden="true">PT</span><span class="brand-name">Papertrade Terminal<span class="brand-sub">Docs</span></span></a>
+  <div class="search" role="search">
+    <label class="visually-hidden" for="doc-search">Search the docs</label>
+    <input id="doc-search" type="search" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-controls="search-results" aria-expanded="false">
+    <kbd class="search-key" aria-hidden="true">/</kbd>
+    <ul id="search-results" class="search-results" role="listbox" aria-label="Search results" hidden></ul>
+  </div>
+  <a class="top-link" href="/app/">Open terminal</a>
+  <button class="icon-btn theme-btn" type="button" aria-label="Toggle light and dark theme">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+  </button>
+</header>
+<div class="scrim" hidden></div>
+<div class="layout">
+  <aside id="sidebar" class="sidebar" aria-label="Documentation">
+    <nav aria-label="Pages"><ul><li><a href="/docs/">Overview</a></li><li><a href="/docs/quickstart/">Quickstart</a></li><li><a href="/docs/concepts/">Concepts</a></li><li><a href="/docs/reference/">Reference</a></li><li><a href="/docs/mcp/">MCP server</a></li><li><a href="/docs/connect-your-ai/" aria-current="page">Connect your AI</a></li><li><a href="/docs/agent-discovery/">Agent discovery</a></li><li><a href="/docs/self-hosting/">Self-hosting</a></li><li><a href="/docs/security/">Security and limits</a></li><li><a href="/docs/faq/">FAQ</a></li><li><a href="/docs/changelog/">Changelog</a></li></ul></nav>
+    <p class="sidebar-note">Unofficial, not affiliated with Papertrade. High leverage can lose your whole margin.</p>
+  </aside>
+  <main id="content" class="content" tabindex="-1">
+    <article class="doc">
+      <p class="doc-actions"><a href="/docs/connect-your-ai.md">View as markdown</a></p>
+<h1 id="connect-your-ai">Connect your AI<a class="anchor" href="#connect-your-ai" aria-label="Link to Connect your AI">#</a></h1>
+<p>Every client below connects to the same server.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Table"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Name</td>
+<td><code>papertrade-terminal</code></td>
+</tr>
+<tr>
+<td>URL</td>
+<td><code>https://papertrade-terminal.pages.dev/mcp</code></td>
+</tr>
+<tr>
+<td>Transport</td>
+<td>Streamable HTTP</td>
+</tr>
+<tr>
+<td>Authentication</td>
+<td>None. No API key, no OAuth.</td>
+</tr>
+</tbody></table></div>
+<p>The server is read-only. Your assistant can look up markets, quote trades and build an unsigned plan with a link, but it cannot sign or place anything. You sign in your own wallet in the terminal. See the <a href="/docs/mcp/">MCP page</a> for the nine tools.</p>
+<blockquote>
+<p>Unofficial, not affiliated with Papertrade. Papertrade allows up to 1000x leverage and a small move can liquidate the whole margin. Nothing here is financial advice.</p>
+</blockquote>
+<p>Each block states what it was checked against. Client configuration changes often, so if a snippet stops working check the linked vendor docs first. Snippets were checked on 2026-10-11.</p>
+<p>A prompt to try once connected:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code>Quote a $50 BTC long at 10x on Papertrade, show the leverage ladder, then build the trade plan and give me the link.</code></pre></div>
+<h2 id="claude-code">Claude Code<a class="anchor" href="#claude-code" aria-label="Link to Claude Code">#</a></h2>
+<p>Verified against code.claude.com/docs/en/mcp (the <code>claude mcp add --transport http &lt;name&gt; &lt;url&gt;</code> form and the <code>.mcp.json</code> shape).</p>
+<div class="code"><span class="code-lang">sh</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-sh">claude mcp add --transport http papertrade-terminal https://papertrade-terminal.pages.dev/mcp</code></pre></div>
+<p>Add <code>--scope user</code> to make it available in every project, or <code>--scope project</code> to write it to a shared <code>.mcp.json</code>:</p>
+<div class="code"><span class="code-lang">json</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;papertrade-terminal&quot;: {
+      &quot;type&quot;: &quot;http&quot;,
+      &quot;url&quot;: &quot;https://papertrade-terminal.pages.dev/mcp&quot;
+    }
+  }
+}</code></pre></div>
+<p>Run <code>/mcp</code> inside Claude Code to confirm the server and its nine tools.</p>
+<h2 id="claudeai-and-claude-desktop-custom-connector">Claude.ai and Claude Desktop (custom connector)<a class="anchor" href="#claudeai-and-claude-desktop-custom-connector" aria-label="Link to Claude.ai and Claude Desktop (custom connector)">#</a></h2>
+<p>Verified against modelcontextprotocol.io &quot;Connect to remote MCP Servers&quot;, which documents Settings, Connectors, Add, Add custom connector.</p>
+<ol>
+<li>Open Settings, then Connectors.</li>
+<li>Click Add, then Add custom connector.</li>
+<li>Paste <code>https://papertrade-terminal.pages.dev/mcp</code>.</li>
+<li>Click Add. There is no authentication step. Leave any OAuth fields empty.</li>
+<li>In a chat, enable the connector from the connectors menu.</li>
+</ol>
+<p>Custom connectors may need a paid plan, and on Team and Enterprise an owner adds the connector once for the organisation.</p>
+<h2 id="claude-desktop-config-file-with-the-mcp-remote-bridge">Claude Desktop (config file with the mcp-remote bridge)<a class="anchor" href="#claude-desktop-config-file-with-the-mcp-remote-bridge" aria-label="Link to Claude Desktop (config file with the mcp-remote bridge)">#</a></h2>
+<p>Verified against the <code>mcp-remote</code> README pattern and Claude Desktop&#39;s <code>claude_desktop_config.json</code> (macOS <code>~/Library/Application Support/Claude/</code>, Windows <code>%APPDATA%\Claude\</code>). Use this only if you prefer a config file over the connector UI. It needs Node.js.</p>
+<div class="code"><span class="code-lang">json</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;papertrade-terminal&quot;: {
+      &quot;command&quot;: &quot;npx&quot;,
+      &quot;args&quot;: [&quot;-y&quot;, &quot;mcp-remote&quot;, &quot;https://papertrade-terminal.pages.dev/mcp&quot;]
+    }
+  }
+}</code></pre></div>
+<p>Fully quit and restart Claude Desktop after editing.</p>
+<h2 id="claude-api-mcp-connector">Claude API (MCP connector)<a class="anchor" href="#claude-api-mcp-connector" aria-label="Link to Claude API (MCP connector)">#</a></h2>
+<p>Verified against platform.claude.com/docs/en/agents-and-tools/mcp-connector, beta header <code>mcp-client-2025-11-20</code>. The connector is a beta feature, so check that page for a newer header (it also documents <code>mcp-client-2026-09-15</code>, which adds pinned tool listings). Set <code>ANTHROPIC_API_KEY</code> first.</p>
+<div class="code"><span class="code-lang">sh</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-sh">curl https://api.anthropic.com/v1/messages \
+  -H &quot;content-type: application/json&quot; \
+  -H &quot;x-api-key: $ANTHROPIC_API_KEY&quot; \
+  -H &quot;anthropic-version: 2023-06-01&quot; \
+  -H &quot;anthropic-beta: mcp-client-2025-11-20&quot; \
+  -d '{
+    &quot;model&quot;: &quot;claude-sonnet-4-5&quot;,
+    &quot;max_tokens&quot;: 1500,
+    &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Quote a $50 BTC long at 10x on Papertrade and build the trade plan.&quot;}],
+    &quot;mcp_servers&quot;: [
+      {&quot;type&quot;: &quot;url&quot;, &quot;url&quot;: &quot;https://papertrade-terminal.pages.dev/mcp&quot;, &quot;name&quot;: &quot;papertrade-terminal&quot;}
+    ],
+    &quot;tools&quot;: [
+      {&quot;type&quot;: &quot;mcp_toolset&quot;, &quot;mcp_server_name&quot;: &quot;papertrade-terminal&quot;}
+    ]
+  }'</code></pre></div>
+<p>Every server in <code>mcp_servers</code> must be referenced by exactly one <code>mcp_toolset</code>. Replace the model with any current Claude model. No <code>authorization_token</code> is needed. To expose only some tools, add <code>default_config: {&quot;enabled&quot;: false}</code> and a <code>configs</code> map to the toolset as described in the vendor page.</p>
+<h2 id="openai-codex-cli-and-ide-extension">OpenAI Codex CLI and IDE extension<a class="anchor" href="#openai-codex-cli-and-ide-extension" aria-label="Link to OpenAI Codex CLI and IDE extension">#</a></h2>
+<p>Verified against the Codex MCP docs (developers.openai.com/codex/mcp). Both surfaces share <code>~/.codex/config.toml</code>.</p>
+<div class="code"><span class="code-lang">toml</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-toml">[mcp_servers.papertrade-terminal]
+url = &quot;https://papertrade-terminal.pages.dev/mcp&quot;</code></pre></div>
+<p>From the command line:</p>
+<div class="code"><span class="code-lang">sh</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-sh">codex mcp add papertrade-terminal --url https://papertrade-terminal.pages.dev/mcp</code></pre></div>
+<p>The docs show <code>codex mcp add &lt;name&gt; --url &lt;url&gt;</code> with an optional <code>--oauth-client-id</code>. This server needs neither. Run <code>/mcp</code> in Codex to see the loaded tools.</p>
+<h2 id="openai-responses-api">OpenAI Responses API<a class="anchor" href="#openai-responses-api" aria-label="Link to OpenAI Responses API">#</a></h2>
+<p>Verified against developers.openai.com/api/docs/guides/tools-connectors-mcp (<code>type: &quot;mcp&quot;</code> with <code>server_label</code>, <code>server_url</code>, <code>require_approval</code>, <code>allowed_tools</code>). Set <code>OPENAI_API_KEY</code> and pick a current model.</p>
+<div class="code"><span class="code-lang">sh</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-sh">curl https://api.openai.com/v1/responses \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;Authorization: Bearer $OPENAI_API_KEY&quot; \
+  -d '{
+    &quot;model&quot;: &quot;gpt-5&quot;,
+    &quot;tools&quot;: [
+      {
+        &quot;type&quot;: &quot;mcp&quot;,
+        &quot;server_label&quot;: &quot;papertrade_terminal&quot;,
+        &quot;server_url&quot;: &quot;https://papertrade-terminal.pages.dev/mcp&quot;,
+        &quot;require_approval&quot;: &quot;never&quot;
+      }
+    ],
+    &quot;input&quot;: &quot;Quote a $50 BTC long at 10x on Papertrade and build the trade plan.&quot;
+  }'</code></pre></div>
+<p><code>require_approval</code> defaults to asking before data is shared with the server. <code>never</code> is reasonable here because every tool is read-only, but you can keep the default. Use <code>allowed_tools</code> to limit the imported tools. The model name above is an example, check OpenAI&#39;s current model list.</p>
+<h2 id="chatgpt-developer-mode">ChatGPT (developer mode)<a class="anchor" href="#chatgpt-developer-mode" aria-label="Link to ChatGPT (developer mode)">#</a></h2>
+<p>Partly verified: the vendor docs confirm developer mode supports remote MCP apps with No authentication, and that the Create app button only appears in developer mode. Menu labels differ between plans and builds, so the exact button text is not confirmed.</p>
+<ol>
+<li>Enable Developer mode in ChatGPT settings (Settings, Apps, Advanced settings, or under Security and login on some builds). Available on Plus, Pro, Business, Enterprise and Edu.</li>
+<li>Choose Create app.</li>
+<li>Name: <code>Papertrade Terminal</code>. MCP server URL: <code>https://papertrade-terminal.pages.dev/mcp</code>. Authentication: No authentication.</li>
+<li>Create it, then enable it for a chat from the composer menu.</li>
+</ol>
+<p>For a custom GPT with Actions instead, import <code>https://papertrade-terminal.pages.dev/openapi.json</code> with authentication set to None.</p>
+<h2 id="gemini-cli">Gemini CLI<a class="anchor" href="#gemini-cli" aria-label="Link to Gemini CLI">#</a></h2>
+<p>Verified against geminicli.com/docs/tools/mcp-server (the <code>httpUrl</code> setting and <code>gemini mcp add --transport http</code>). Note that Google has announced a transition to Antigravity CLI for some account tiers, so check which CLI your account uses.</p>
+<div class="code"><span class="code-lang">sh</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-sh">gemini mcp add --transport http papertrade-terminal https://papertrade-terminal.pages.dev/mcp</code></pre></div>
+<p>Or in <code>~/.gemini/settings.json</code> (or <code>.gemini/settings.json</code> in a project):</p>
+<div class="code"><span class="code-lang">json</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;papertrade-terminal&quot;: {
+      &quot;httpUrl&quot;: &quot;https://papertrade-terminal.pages.dev/mcp&quot;
+    }
+  }
+}</code></pre></div>
+<p><code>httpUrl</code> selects Streamable HTTP. The plain <code>url</code> key selects the legacy SSE transport and is not what you want here. Leave <code>trust</code> at <code>false</code>.</p>
+<h2 id="cursor">Cursor<a class="anchor" href="#cursor" aria-label="Link to Cursor">#</a></h2>
+<p>Verified against cursor.com/docs/context/mcp. Project file <code>.cursor/mcp.json</code> or global <code>~/.cursor/mcp.json</code>:</p>
+<div class="code"><span class="code-lang">json</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;papertrade-terminal&quot;: {
+      &quot;url&quot;: &quot;https://papertrade-terminal.pages.dev/mcp&quot;
+    }
+  }
+}</code></pre></div>
+<h2 id="vs-code-github-copilot-agent-mode">VS Code (GitHub Copilot agent mode)<a class="anchor" href="#vs-code-github-copilot-agent-mode" aria-label="Link to VS Code (GitHub Copilot agent mode)">#</a></h2>
+<p>Verified against code.visualstudio.com/docs/copilot/customization/mcp-servers. Workspace file <code>.vscode/mcp.json</code> uses a top-level <code>servers</code> key (not <code>mcpServers</code>):</p>
+<div class="code"><span class="code-lang">json</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-json">{
+  &quot;servers&quot;: {
+    &quot;papertrade-terminal&quot;: {
+      &quot;type&quot;: &quot;http&quot;,
+      &quot;url&quot;: &quot;https://papertrade-terminal.pages.dev/mcp&quot;
+    }
+  }
+}</code></pre></div>
+<p>Use the MCP: Add Server command for the same thing through the UI. The documented <code>code --add-mcp</code> example covers stdio servers, and it is not verified with an HTTP server, so prefer the file.</p>
+<h2 id="windsurf">Windsurf<a class="anchor" href="#windsurf" aria-label="Link to Windsurf">#</a></h2>
+<p>Verified against the Cascade MCP docs (docs.devin.ai/desktop/cascade/mcp, formerly docs.windsurf.com). The file is <code>~/.codeium/windsurf/mcp_config.json</code> and the docs use <code>serverUrl</code> for remote servers. The same page now lists <code>~/.config/devin/mcp_config.json</code> for the current location, so use whichever your installed version shows in its MCP settings.</p>
+<div class="code"><span class="code-lang">json</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;papertrade-terminal&quot;: {
+      &quot;serverUrl&quot;: &quot;https://papertrade-terminal.pages.dev/mcp&quot;
+    }
+  }
+}</code></pre></div>
+<h2 id="zed">Zed<a class="anchor" href="#zed" aria-label="Link to Zed">#</a></h2>
+<p>Verified against zed.dev/docs/ai/mcp. Add to Zed <code>settings.json</code>:</p>
+<div class="code"><span class="code-lang">json</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-json">{
+  &quot;context_servers&quot;: {
+    &quot;papertrade-terminal&quot;: {
+      &quot;url&quot;: &quot;https://papertrade-terminal.pages.dev/mcp&quot;
+    }
+  }
+}</code></pre></div>
+<p>With no <code>Authorization</code> header configured Zed may offer to authenticate. This server needs no authentication, so you can ignore that prompt if it appears.</p>
+<h2 id="cline">Cline<a class="anchor" href="#cline" aria-label="Link to Cline">#</a></h2>
+<p>Verified against the Cline docs (docs.cline.bot, adding and configuring servers). Open the MCP Servers panel, choose Configure MCP Servers, and add to <code>cline_mcp_settings.json</code>. Set <code>type</code> explicitly, because omitting it falls back to the legacy SSE transport.</p>
+<div class="code"><span class="code-lang">json</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;papertrade-terminal&quot;: {
+      &quot;type&quot;: &quot;streamableHttp&quot;,
+      &quot;url&quot;: &quot;https://papertrade-terminal.pages.dev/mcp&quot;
+    }
+  }
+}</code></pre></div>
+<h2 id="goose">Goose<a class="anchor" href="#goose" aria-label="Link to Goose">#</a></h2>
+<p>Verified against the Goose docs (<code>goose configure</code> and <code>--with-streamable-http-extension</code>). One-off session:</p>
+<div class="code"><span class="code-lang">sh</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-sh">goose session --with-streamable-http-extension &quot;https://papertrade-terminal.pages.dev/mcp&quot;</code></pre></div>
+<p>Permanent: run <code>goose configure</code>, choose Add Extension, then Remote Extension (Streamable HTTP), and paste the URL. The resulting <code>~/.config/goose/config.yaml</code> entry uses the documented fields <code>name</code>, <code>type</code>, <code>uri</code>, <code>enabled</code> and <code>timeout</code>. The docs do not print a minimal remote example, so the entry below is assembled from those field names:</p>
+<div class="code"><span class="code-lang">yaml</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-yaml">extensions:
+  papertrade-terminal:
+    name: Papertrade Terminal
+    type: streamable_http
+    uri: https://papertrade-terminal.pages.dev/mcp
+    enabled: true
+    timeout: 300</code></pre></div>
+<h2 id="continue">Continue<a class="anchor" href="#continue" aria-label="Link to Continue">#</a></h2>
+<p>Verified against docs.continue.dev (MCP deep dive, Streamable HTTP transport). In <code>~/.continue/config.yaml</code>, or a file under <code>.continue/mcpServers/</code>. Continue uses a list, and MCP tools are available in agent mode:</p>
+<div class="code"><span class="code-lang">yaml</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-yaml">mcpServers:
+  - name: papertrade-terminal
+    type: streamable-http
+    url: https://papertrade-terminal.pages.dev/mcp</code></pre></div>
+<p>Block files under <code>.continue/mcpServers/</code> also need the usual <code>name</code>, <code>version</code> and <code>schema</code> metadata at the top.</p>
+<h2 id="any-other-mcp-client">Any other MCP client<a class="anchor" href="#any-other-mcp-client" aria-label="Link to Any other MCP client">#</a></h2>
+<p>Use a Streamable HTTP server entry with the URL above and no headers. If a client only speaks stdio, bridge it with <code>npx -y mcp-remote https://papertrade-terminal.pages.dev/mcp</code>. To test any client, run the inspector:</p>
+<div class="code"><span class="code-lang">sh</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-sh">npx @modelcontextprotocol/inspector --cli https://papertrade-terminal.pages.dev/mcp --transport http --method tools/list</code></pre></div>
+<h2 id="agent-frameworks-without-mcp">Agent frameworks without MCP<a class="anchor" href="#agent-frameworks-without-mcp" aria-label="Link to Agent frameworks without MCP">#</a></h2>
+<p>Frameworks and OpenAI-compatible agents that cannot speak MCP can still use the service. Fetch <a href="/openapi.json">/openapi.json</a>, which describes <code>POST /mcp</code> and the proxied Papertrade read routes, generate tools from it, and call <code>POST /mcp</code> with JSON-RPC bodies such as:</p>
+<div class="code"><span class="code-lang">sh</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-sh">curl -s https://papertrade-terminal.pages.dev/mcp \
+  -H 'content-type: application/json' \
+  -d '{&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;id&quot;:1,&quot;method&quot;:&quot;tools/call&quot;,&quot;params&quot;:{&quot;name&quot;:&quot;list_markets&quot;,&quot;arguments&quot;:{}}}'</code></pre></div>
+<p>Also useful for agents: <a href="/llms.txt">/llms.txt</a>, <a href="/llms-full.txt">/llms-full.txt</a> and the <a href="/docs/agent-discovery/">discovery files</a>.</p>
+<h2 id="troubleshooting">Troubleshooting<a class="anchor" href="#troubleshooting" aria-label="Link to Troubleshooting">#</a></h2>
+<ul>
+<li><strong><code>405</code> on a browser GET with <code>Accept: text/event-stream</code></strong>: expected. The server has no standalone stream, POST instead.</li>
+<li><strong><code>429</code> or error <code>-32029</code></strong>: you exceeded 60 requests per minute from one IP. Wait for <code>Retry-After</code> seconds.</li>
+<li><strong>Client says it needs OAuth</strong>: it should not. Choose &quot;no authentication&quot; or leave auth blank.</li>
+<li><strong>A tool returns <code>isError: true</code></strong>: the text explains why, for example an unknown market or an unreachable upstream. Retry shortly.</li>
+</ul>
+
+      <nav class="pager" aria-label="Previous and next page"><a class="pager-prev" href="/docs/mcp/" rel="prev"><span>Previous</span>MCP server</a><a class="pager-next" href="/docs/agent-discovery/" rel="next"><span>Next</span>Agent discovery</a></nav>
+    </article>
+    <footer class="foot">
+      <p>Unofficial, not affiliated with Papertrade. Papertrade allows up to 1000x leverage and a small move against a position can liquidate the whole margin. Not financial advice.</p>
+      <p><a href="/">Home</a> <a href="/app/">Terminal</a> <a href="/llms.txt">llms.txt</a> <a href="/mcp">MCP</a> <a href="https://github.com/nirholas/papertrade-terminal">GitHub</a> Apache-2.0</p>
+    </footer>
+  </main>
+  <aside class="toc-col" aria-label="Table of contents"><nav class="toc" aria-label="On this page"><p class="toc-title">On this page</p><ul><li class="toc-2"><a href="#claude-code">Claude Code</a></li><li class="toc-2"><a href="#claudeai-and-claude-desktop-custom-connector">Claude.ai and Claude Desktop (custom connector)</a></li><li class="toc-2"><a href="#claude-desktop-config-file-with-the-mcp-remote-bridge">Claude Desktop (config file with the mcp-remote bridge)</a></li><li class="toc-2"><a href="#claude-api-mcp-connector">Claude API (MCP connector)</a></li><li class="toc-2"><a href="#openai-codex-cli-and-ide-extension">OpenAI Codex CLI and IDE extension</a></li><li class="toc-2"><a href="#openai-responses-api">OpenAI Responses API</a></li><li class="toc-2"><a href="#chatgpt-developer-mode">ChatGPT (developer mode)</a></li><li class="toc-2"><a href="#gemini-cli">Gemini CLI</a></li><li class="toc-2"><a href="#cursor">Cursor</a></li><li class="toc-2"><a href="#vs-code-github-copilot-agent-mode">VS Code (GitHub Copilot agent mode)</a></li><li class="toc-2"><a href="#windsurf">Windsurf</a></li><li class="toc-2"><a href="#zed">Zed</a></li><li class="toc-2"><a href="#cline">Cline</a></li><li class="toc-2"><a href="#goose">Goose</a></li><li class="toc-2"><a href="#continue">Continue</a></li><li class="toc-2"><a href="#any-other-mcp-client">Any other MCP client</a></li><li class="toc-2"><a href="#agent-frameworks-without-mcp">Agent frameworks without MCP</a></li><li class="toc-2"><a href="#troubleshooting">Troubleshooting</a></li></ul></nav></aside>
+</div>
+</body>
+</html>

@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://papertrade-terminal.pages.dev/</loc><lastmod>2026-10-10</lastmod></url>
-  <url><loc>https://papertrade-terminal.pages.dev/llms.txt</loc><lastmod>2026-10-10</lastmod></url>
+  <url><loc>https://papertrade-terminal.pages.dev/</loc></url>
+  <url><loc>https://papertrade-terminal.pages.dev/app/</loc></url>
+  <url><loc>https://papertrade-terminal.pages.dev/docs/</loc><lastmod>2026-10-11</lastmod></url>
+  <url><loc>https://papertrade-terminal.pages.dev/docs/quickstart/</loc><lastmod>2026-10-11</lastmod></url>
+  <url><loc>https://papertrade-terminal.pages.dev/docs/concepts/</loc><lastmod>2026-10-11</lastmod></url>
+  <url><loc>https://papertrade-terminal.pages.dev/docs/reference/</loc><lastmod>2026-10-11</lastmod></url>
+  <url><loc>https://papertrade-terminal.pages.dev/docs/mcp/</loc><lastmod>2026-10-11</lastmod></url>
+  <url><loc>https://papertrade-terminal.pages.dev/docs/connect-your-ai/</loc><lastmod>2026-10-11</lastmod></url>
+  <url><loc>https://papertrade-terminal.pages.dev/docs/agent-discovery/</loc><lastmod>2026-10-11</lastmod></url>
+  <url><loc>https://papertrade-terminal.pages.dev/docs/self-hosting/</loc><lastmod>2026-10-11</lastmod></url>
+  <url><loc>https://papertrade-terminal.pages.dev/docs/security/</loc><lastmod>2026-10-11</lastmod></url>
+  <url><loc>https://papertrade-terminal.pages.dev/docs/faq/</loc><lastmod>2026-10-11</lastmod></url>
+  <url><loc>https://papertrade-terminal.pages.dev/docs/changelog/</loc><lastmod>2026-10-11</lastmod></url>
 </urlset>

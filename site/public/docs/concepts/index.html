@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concepts - Papertrade Terminal Docs</title>
+<meta name="description" content="The Papertrade rules that shape every order - raw price scale, margin wad, bust price, deadband, impact haircut, the 2% win fee, session keys, close batches and the relayer queue.">
+<link rel="canonical" href="https://papertrade-terminal.pages.dev/docs/concepts/">
+<link rel="alternate" type="text/markdown" href="https://papertrade-terminal.pages.dev/docs/concepts.md">
+<meta name="color-scheme" content="dark light">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Papertrade Terminal Docs">
+<meta property="og:title" content="Concepts - Papertrade Terminal Docs">
+<meta property="og:description" content="The Papertrade rules that shape every order - raw price scale, margin wad, bust price, deadband, impact haircut, the 2% win fee, session keys, close batches and the relayer queue.">
+<meta property="og:url" content="https://papertrade-terminal.pages.dev/docs/concepts/">
+<meta name="twitter:card" content="summary">
+<meta name="robots" content="index, follow">
+<link rel="stylesheet" href="/docs/docs.css">
+<script src="/docs/docs.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="top">
+  <button class="icon-btn menu-btn" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+  <a class="brand" href="/docs/"><span class="brand-mark" aria-hidden="true">PT</span><span class="brand-name">Papertrade Terminal<span class="brand-sub">Docs</span></span></a>
+  <div class="search" role="search">
+    <label class="visually-hidden" for="doc-search">Search the docs</label>
+    <input id="doc-search" type="search" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-controls="search-results" aria-expanded="false">
+    <kbd class="search-key" aria-hidden="true">/</kbd>
+    <ul id="search-results" class="search-results" role="listbox" aria-label="Search results" hidden></ul>
+  </div>
+  <a class="top-link" href="/app/">Open terminal</a>
+  <button class="icon-btn theme-btn" type="button" aria-label="Toggle light and dark theme">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+  </button>
+</header>
+<div class="scrim" hidden></div>
+<div class="layout">
+  <aside id="sidebar" class="sidebar" aria-label="Documentation">
+    <nav aria-label="Pages"><ul><li><a href="/docs/">Overview</a></li><li><a href="/docs/quickstart/">Quickstart</a></li><li><a href="/docs/concepts/" aria-current="page">Concepts</a></li><li><a href="/docs/reference/">Reference</a></li><li><a href="/docs/mcp/">MCP server</a></li><li><a href="/docs/connect-your-ai/">Connect your AI</a></li><li><a href="/docs/agent-discovery/">Agent discovery</a></li><li><a href="/docs/self-hosting/">Self-hosting</a></li><li><a href="/docs/security/">Security and limits</a></li><li><a href="/docs/faq/">FAQ</a></li><li><a href="/docs/changelog/">Changelog</a></li></ul></nav>
+    <p class="sidebar-note">Unofficial, not affiliated with Papertrade. High leverage can lose your whole margin.</p>
+  </aside>
+  <main id="content" class="content" tabindex="-1">
+    <article class="doc">
+      <p class="doc-actions"><a href="/docs/concepts.md">View as markdown</a></p>
+<h1 id="concepts">Concepts<a class="anchor" href="#concepts" aria-label="Link to Concepts">#</a></h1>
+<p>The terminal does not reimplement protocol math. Every formula below comes from <a href="https://github.com/nirholas/papertrade-sdk">papertrade-sdk</a>, which is verified against recorded live positions. These notes explain what the numbers on screen mean.</p>
+<h2 id="raw-prices-and-the-price-scale">Raw prices and the price scale<a class="anchor" href="#raw-prices-and-the-price-scale" aria-label="Link to Raw prices and the price scale">#</a></h2>
+<p>Papertrade stores prices as integers. Each market has a <code>priceScale</code> (for example 10, 100 or 1000000) and a raw price is <code>price x priceScale</code>. The terminal and the MCP tools convert for display, so you always see USD prices. When you build your own integrations, never compare a raw price to a USD price.</p>
+<h2 id="margin-is-a-wad">Margin is a wad<a class="anchor" href="#margin-is-a-wad" aria-label="Link to Margin is a wad">#</a></h2>
+<p>Margin and balances are 18-decimal fixed point numbers (&quot;wads&quot;). USDC on HyperEVM has 6 decimals, so deposits and withdrawals convert between the two. Open interest and cap fields on a market are in base-asset quantity, not USD, and are priced with the current mark.</p>
+<h2 id="notional-and-leverage">Notional and leverage<a class="anchor" href="#notional-and-leverage" aria-label="Link to Notional and leverage">#</a></h2>
+<p><code>notional = margin x leverage</code>. A $50 margin at 10x controls $500 of exposure. Leverage runs from 1x to the market maximum (up to 1000x). The relayer enforces a minimum margin, a minimum open notional, a maximum position notional per market, and per-side open interest caps. The live values come from the trading state, and the <code>get_protocol_status</code> tool reports them.</p>
+<h2 id="entry-and-the-mark">Entry and the mark<a class="anchor" href="#entry-and-the-mark" aria-label="Link to Entry and the mark">#</a></h2>
+<p>Papertrade fills at the mark: the Hyperliquid best bid and offer mid that the protocol settles on. The order is accepted into a queue and processed by the relayer, so the fill price is the mark when it is processed, not the instant you press confirm.</p>
+<h2 id="bust-price-liquidation-price">Bust price (liquidation price)<a class="anchor" href="#bust-price-liquidation-price" aria-label="Link to Bust price (liquidation price)">#</a></h2>
+<p>The bust price is where the position is liquidated and the entire margin is forfeited. It is computed with two roundings and a per-market buffer (<code>bustBufferRaw</code>, a few basis points):</p>
+<ul>
+<li>Long: <code>p0 = ceil(entry x (L - 1) / L)</code>, then <code>bust = floor(p0 x (1e18 + buffer) / 1e18)</code></li>
+<li>Short: <code>p0 = floor(entry x (L + 1) / L)</code>, then <code>bust = ceil(p0 x (1e18 - buffer) / 1e18)</code></li>
+</ul>
+<p>The SDK&#39;s <code>liquidationPriceRaw</code> matches 205 of 205 recorded live positions. At 1000x the bust price is within a fraction of a percent of entry, so a tiny adverse move liquidates you.</p>
+<h2 id="deadband">Deadband<a class="anchor" href="#deadband" aria-label="Link to Deadband">#</a></h2>
+<p>When you win, Papertrade treats the exit as slightly worse than it was: by <code>entry / 50000</code> (0.002 percent). Moves smaller than this pay nothing. The pre-trade panel and the <code>quote_close_position</code> tool apply it for you.</p>
+<h2 id="impact-haircut">Impact haircut<a class="anchor" href="#impact-haircut" aria-label="Link to Impact haircut">#</a></h2>
+<p>Wins are scaled down by a factor that depends on the size of the move, the market&#39;s rate multiplier, its position multiplier and its reference notional:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code>kept = (1 - baseRate) / (1 + 1/(move x rateMultiplier) + referenceNotional / (1e6 x move x positionMultiplier))</code></pre></div>
+<p>Large wins on small positions keep a smaller fraction than moderate wins. Losses are paid 1:1 and are never haircut. The <code>keptFraction</code> field in <code>quote_close_position</code> is this factor.</p>
+<h2 id="the-2-win-fee">The 2% win fee<a class="anchor" href="#the-2-win-fee" aria-label="Link to The 2% win fee">#</a></h2>
+<p>After deadband and haircut, a 2% fee is taken from the win. Losses pay no fee. Net PnL on a close is therefore <code>raw win, adjusted, minus 2%</code> for a win, the raw loss for a loss, and the full margin lost if the exit crosses the bust price.</p>
+<h2 id="session-keys-trade-never-withdraw">Session keys: trade, never withdraw<a class="anchor" href="#session-keys-trade-never-withdraw" aria-label="Link to Session keys: trade, never withdraw">#</a></h2>
+<p>The wallet signs <code>RegisterSessionKey</code> once (30 day expiry, zero fee address). The session key then signs <code>OpenPosition</code>, <code>Close</code> and <code>CancelIntent</code>. The wallet itself must sign <code>WithdrawToCore</code>, <code>Stake</code>, <code>Unstake</code> and <code>Claim</code>. So a stolen or leaked session key can trade your balance but cannot move funds out. The terminal stores the key in <code>localStorage</code> and shows its expiry. Clear it from the Trade tab to revoke local access, and re-register when it expires.</p>
+<h2 id="intents-the-queue-and-the-relayer">Intents, the queue and the relayer<a class="anchor" href="#intents-the-queue-and-the-relayer" aria-label="Link to Intents, the queue and the relayer">#</a></h2>
+<p>Every action is a signed <strong>intent</strong> posted to <code>POST /intents</code>. The relayer validates it, queues it, and processes it against the live mark. States are <code>queued</code>, <code>prepared</code>, <code>confirmed</code>, and on failure <code>failed</code>, <code>expired</code> or <code>cancelled</code>. An intent can be cancelled only while it is <code>queued</code>. Each intent carries a nonce and a deadline one hour out. The terminal tracks outcomes on the wallet&#39;s live SSE stream (<code>/state/user/live</code>) and shows them as toasts and in the Pending table.</p>
+<h2 id="closing-in-batches">Closing in batches<a class="anchor" href="#closing-in-batches" aria-label="Link to Closing in batches">#</a></h2>
+<p>You can close one position or several at once. A single close intent carries at most 12 position ids (<code>MAX_CLOSE_BATCH</code>), so &quot;close selected&quot; splits larger selections into batches of 12.</p>
+<h2 id="funding">Funding<a class="anchor" href="#funding" aria-label="Link to Funding">#</a></h2>
+<p>The first deposit pays a 1 USDC activation fee. A withdrawal has a 10 USDC minimum after fees, and the HyperEVM route needs two signatures and a 0.1 USDC gas allowance. The terminal shows route, fee and minimum before you sign.</p>
+<blockquote>
+<p>Papertrade allows up to 1000x leverage. A small move against the position liquidates it and the whole margin is lost. This is not financial advice. This project is unofficial and not affiliated with Papertrade.</p>
+</blockquote>
+
+      <nav class="pager" aria-label="Previous and next page"><a class="pager-prev" href="/docs/quickstart/" rel="prev"><span>Previous</span>Quickstart</a><a class="pager-next" href="/docs/reference/" rel="next"><span>Next</span>Reference</a></nav>
+    </article>
+    <footer class="foot">
+      <p>Unofficial, not affiliated with Papertrade. Papertrade allows up to 1000x leverage and a small move against a position can liquidate the whole margin. Not financial advice.</p>
+      <p><a href="/">Home</a> <a href="/app/">Terminal</a> <a href="/llms.txt">llms.txt</a> <a href="/mcp">MCP</a> <a href="https://github.com/nirholas/papertrade-terminal">GitHub</a> Apache-2.0</p>
+    </footer>
+  </main>
+  <aside class="toc-col" aria-label="Table of contents"><nav class="toc" aria-label="On this page"><p class="toc-title">On this page</p><ul><li class="toc-2"><a href="#raw-prices-and-the-price-scale">Raw prices and the price scale</a></li><li class="toc-2"><a href="#margin-is-a-wad">Margin is a wad</a></li><li class="toc-2"><a href="#notional-and-leverage">Notional and leverage</a></li><li class="toc-2"><a href="#entry-and-the-mark">Entry and the mark</a></li><li class="toc-2"><a href="#bust-price-liquidation-price">Bust price (liquidation price)</a></li><li class="toc-2"><a href="#deadband">Deadband</a></li><li class="toc-2"><a href="#impact-haircut">Impact haircut</a></li><li class="toc-2"><a href="#the-2-win-fee">The 2% win fee</a></li><li class="toc-2"><a href="#session-keys-trade-never-withdraw">Session keys: trade, never withdraw</a></li><li class="toc-2"><a href="#intents-the-queue-and-the-relayer">Intents, the queue and the relayer</a></li><li class="toc-2"><a href="#closing-in-batches">Closing in batches</a></li><li class="toc-2"><a href="#funding">Funding</a></li></ul></nav></aside>
+</div>
+</body>
+</html>

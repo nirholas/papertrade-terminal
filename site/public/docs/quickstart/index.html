@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quickstart - Papertrade Terminal Docs</title>
+<meta name="description" content="Open the terminal, connect a wallet, enable trading with a session key and place a first order, or browse any account read-only.">
+<link rel="canonical" href="https://papertrade-terminal.pages.dev/docs/quickstart/">
+<link rel="alternate" type="text/markdown" href="https://papertrade-terminal.pages.dev/docs/quickstart.md">
+<meta name="color-scheme" content="dark light">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Papertrade Terminal Docs">
+<meta property="og:title" content="Quickstart - Papertrade Terminal Docs">
+<meta property="og:description" content="Open the terminal, connect a wallet, enable trading with a session key and place a first order, or browse any account read-only.">
+<meta property="og:url" content="https://papertrade-terminal.pages.dev/docs/quickstart/">
+<meta name="twitter:card" content="summary">
+<meta name="robots" content="index, follow">
+<link rel="stylesheet" href="/docs/docs.css">
+<script src="/docs/docs.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="top">
+  <button class="icon-btn menu-btn" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+  <a class="brand" href="/docs/"><span class="brand-mark" aria-hidden="true">PT</span><span class="brand-name">Papertrade Terminal<span class="brand-sub">Docs</span></span></a>
+  <div class="search" role="search">
+    <label class="visually-hidden" for="doc-search">Search the docs</label>
+    <input id="doc-search" type="search" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-controls="search-results" aria-expanded="false">
+    <kbd class="search-key" aria-hidden="true">/</kbd>
+    <ul id="search-results" class="search-results" role="listbox" aria-label="Search results" hidden></ul>
+  </div>
+  <a class="top-link" href="/app/">Open terminal</a>
+  <button class="icon-btn theme-btn" type="button" aria-label="Toggle light and dark theme">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+  </button>
+</header>
+<div class="scrim" hidden></div>
+<div class="layout">
+  <aside id="sidebar" class="sidebar" aria-label="Documentation">
+    <nav aria-label="Pages"><ul><li><a href="/docs/">Overview</a></li><li><a href="/docs/quickstart/" aria-current="page">Quickstart</a></li><li><a href="/docs/concepts/">Concepts</a></li><li><a href="/docs/reference/">Reference</a></li><li><a href="/docs/mcp/">MCP server</a></li><li><a href="/docs/connect-your-ai/">Connect your AI</a></li><li><a href="/docs/agent-discovery/">Agent discovery</a></li><li><a href="/docs/self-hosting/">Self-hosting</a></li><li><a href="/docs/security/">Security and limits</a></li><li><a href="/docs/faq/">FAQ</a></li><li><a href="/docs/changelog/">Changelog</a></li></ul></nav>
+    <p class="sidebar-note">Unofficial, not affiliated with Papertrade. High leverage can lose your whole margin.</p>
+  </aside>
+  <main id="content" class="content" tabindex="-1">
+    <article class="doc">
+      <p class="doc-actions"><a href="/docs/quickstart.md">View as markdown</a></p>
+<h1 id="quickstart">Quickstart<a class="anchor" href="#quickstart" aria-label="Link to Quickstart">#</a></h1>
+<p>You need an injected browser wallet (any EIP-6963 wallet, or <code>window.ethereum</code>) and USDC on HyperEVM. You do not need an account or an API key.</p>
+<blockquote>
+<p><strong>Unofficial, not affiliated with Papertrade.</strong> Leverage up to 1000x can lose your whole margin. Start small.</p>
+</blockquote>
+<h2 id="1-look-around-read-only">1. Look around read-only<a class="anchor" href="#1-look-around-read-only" aria-label="Link to 1. Look around read-only">#</a></h2>
+<p>Open <a href="/app/">/app/</a>. Charts, marks and markets load with no wallet. To browse any account without connecting, add <code>?watch=</code> and a public address:</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code>https://papertrade-terminal.pages.dev/app/?watch=0xYourAddress</code></pre></div>
+<h2 id="2-connect-and-switch-chain">2. Connect and switch chain<a class="anchor" href="#2-connect-and-switch-chain" aria-label="Link to 2. Connect and switch chain">#</a></h2>
+<p>Click <strong>Connect</strong>, pick your wallet, and approve. If the wallet is on another chain the terminal offers to switch to or add HyperEVM (chain 999). The header then shows your address and your USDC and HYPE balances. HYPE pays gas for deposits and swaps. Trading itself is gas-free.</p>
+<h2 id="3-fund-your-papertrade-balance">3. Fund your Papertrade balance<a class="anchor" href="#3-fund-your-papertrade-balance" aria-label="Link to 3. Fund your Papertrade balance">#</a></h2>
+<p>Open the <strong>Fund</strong> tab. The deposit flow computes your personal deposit proxy, shows the fee and minimum, and asks your wallet to sign each step. The first deposit pays a one-time activation fee of 1 USDC. Withdrawals live in the same tab and show route, fee and minimum before you sign.</p>
+<h2 id="4-enable-trading">4. Enable trading<a class="anchor" href="#4-enable-trading" aria-label="Link to 4. Enable trading">#</a></h2>
+<p>On the <strong>Trade</strong> tab choose <strong>Enable trading</strong>. A plain-language summary explains what you are authorising, then your wallet signs one <code>RegisterSessionKey</code> message. The terminal generates a session key in your browser, registers it for 30 days and stores it in <code>localStorage</code>. You can clear it any time from the same control. The key can open, close and cancel. It can never withdraw.</p>
+<h2 id="5-place-an-order">5. Place an order<a class="anchor" href="#5-place-an-order" aria-label="Link to 5. Place an order">#</a></h2>
+<ol>
+<li>Pick a market (<code>M</code> cycles markets).</li>
+<li>Choose long or short (<code>B</code> or <code>S</code>).</li>
+<li>Enter margin in USD (<code>/</code> focuses the field) and set leverage (slider, or <code>[</code> and <code>]</code>).</li>
+<li>Read the pre-trade panel: notional, entry, <strong>bust price</strong>, and what a close pays at several price moves after deadband, impact haircut and the 2% win fee.</li>
+<li>Press <strong>Review</strong>, check the confirmation dialog, and confirm. The session key signs the intent and the terminal submits it through the same-origin proxy.</li>
+<li>Watch the <strong>Pending</strong> list. The order fills at the mark when the relayer processes it. You can cancel it while it is still queued.</li>
+</ol>
+<h2 id="6-open-a-prefilled-trade-from-a-link">6. Open a prefilled trade from a link<a class="anchor" href="#6-open-a-prefilled-trade-from-a-link" aria-label="Link to 6. Open a prefilled trade from a link">#</a></h2>
+<p>Any link of this form opens the terminal with the ticket filled in and a review banner. Nothing is signed or sent until you confirm.</p>
+<div class="code"><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code>https://papertrade-terminal.pages.dev/?market=BTC&amp;side=long&amp;margin=50&amp;leverage=10</code></pre></div>
+<p>See <a href="/docs/reference/#deep-link-parameters">reference</a> for every parameter.</p>
+<h2 id="7-ask-an-ai-to-quote-it-first">7. Ask an AI to quote it first<a class="anchor" href="#7-ask-an-ai-to-quote-it-first" aria-label="Link to 7. Ask an AI to quote it first">#</a></h2>
+<p>Connect an assistant to the MCP server and ask it to quote the trade, show the ladder of leverage steps, and build the plan. See <a href="/docs/connect-your-ai/">Connect your AI</a>. The assistant cannot place the order. It returns the link from step 6 for you to open.</p>
+<h2 id="run-it-locally">Run it locally<a class="anchor" href="#run-it-locally" aria-label="Link to Run it locally">#</a></h2>
+<div class="code"><span class="code-lang">sh</span><button class="copy" type="button" aria-label="Copy code to clipboard">Copy</button><pre><code class="language-sh">npm install ../papertrade-sdk-0.1.0.tgz viem
+npm install
+npm run dev:site</code></pre></div>
+<p>This builds the docs and the app, then serves everything with <code>wrangler pages dev</code> on <a href="http://localhost:8788">http://localhost:8788</a>. See <a href="/docs/self-hosting/">self-hosting</a>.</p>
+
+      <nav class="pager" aria-label="Previous and next page"><a class="pager-prev" href="/docs/" rel="prev"><span>Previous</span>Overview</a><a class="pager-next" href="/docs/concepts/" rel="next"><span>Next</span>Concepts</a></nav>
+    </article>
+    <footer class="foot">
+      <p>Unofficial, not affiliated with Papertrade. Papertrade allows up to 1000x leverage and a small move against a position can liquidate the whole margin. Not financial advice.</p>
+      <p><a href="/">Home</a> <a href="/app/">Terminal</a> <a href="/llms.txt">llms.txt</a> <a href="/mcp">MCP</a> <a href="https://github.com/nirholas/papertrade-terminal">GitHub</a> Apache-2.0</p>
+    </footer>
+  </main>
+  <aside class="toc-col" aria-label="Table of contents"><nav class="toc" aria-label="On this page"><p class="toc-title">On this page</p><ul><li class="toc-2"><a href="#1-look-around-read-only">1. Look around read-only</a></li><li class="toc-2"><a href="#2-connect-and-switch-chain">2. Connect and switch chain</a></li><li class="toc-2"><a href="#3-fund-your-papertrade-balance">3. Fund your Papertrade balance</a></li><li class="toc-2"><a href="#4-enable-trading">4. Enable trading</a></li><li class="toc-2"><a href="#5-place-an-order">5. Place an order</a></li><li class="toc-2"><a href="#6-open-a-prefilled-trade-from-a-link">6. Open a prefilled trade from a link</a></li><li class="toc-2"><a href="#7-ask-an-ai-to-quote-it-first">7. Ask an AI to quote it first</a></li><li class="toc-2"><a href="#run-it-locally">Run it locally</a></li></ul></nav></aside>
+</div>
+</body>
+</html>

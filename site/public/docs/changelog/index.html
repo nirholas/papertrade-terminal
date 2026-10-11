@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Changelog - Papertrade Terminal Docs</title>
+<meta name="description" content="Release history for Papertrade Terminal, including the 0.2.0 MCP server, docs site and agent discovery files.">
+<link rel="canonical" href="https://papertrade-terminal.pages.dev/docs/changelog/">
+<link rel="alternate" type="text/markdown" href="https://papertrade-terminal.pages.dev/docs/changelog.md">
+<meta name="color-scheme" content="dark light">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Papertrade Terminal Docs">
+<meta property="og:title" content="Changelog - Papertrade Terminal Docs">
+<meta property="og:description" content="Release history for Papertrade Terminal, including the 0.2.0 MCP server, docs site and agent discovery files.">
+<meta property="og:url" content="https://papertrade-terminal.pages.dev/docs/changelog/">
+<meta name="twitter:card" content="summary">
+<meta name="robots" content="index, follow">
+<link rel="stylesheet" href="/docs/docs.css">
+<script src="/docs/docs.js"></script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="top">
+  <button class="icon-btn menu-btn" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+  <a class="brand" href="/docs/"><span class="brand-mark" aria-hidden="true">PT</span><span class="brand-name">Papertrade Terminal<span class="brand-sub">Docs</span></span></a>
+  <div class="search" role="search">
+    <label class="visually-hidden" for="doc-search">Search the docs</label>
+    <input id="doc-search" type="search" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-controls="search-results" aria-expanded="false">
+    <kbd class="search-key" aria-hidden="true">/</kbd>
+    <ul id="search-results" class="search-results" role="listbox" aria-label="Search results" hidden></ul>
+  </div>
+  <a class="top-link" href="/app/">Open terminal</a>
+  <button class="icon-btn theme-btn" type="button" aria-label="Toggle light and dark theme">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+  </button>
+</header>
+<div class="scrim" hidden></div>
+<div class="layout">
+  <aside id="sidebar" class="sidebar" aria-label="Documentation">
+    <nav aria-label="Pages"><ul><li><a href="/docs/">Overview</a></li><li><a href="/docs/quickstart/">Quickstart</a></li><li><a href="/docs/concepts/">Concepts</a></li><li><a href="/docs/reference/">Reference</a></li><li><a href="/docs/mcp/">MCP server</a></li><li><a href="/docs/connect-your-ai/">Connect your AI</a></li><li><a href="/docs/agent-discovery/">Agent discovery</a></li><li><a href="/docs/self-hosting/">Self-hosting</a></li><li><a href="/docs/security/">Security and limits</a></li><li><a href="/docs/faq/">FAQ</a></li><li><a href="/docs/changelog/" aria-current="page">Changelog</a></li></ul></nav>
+    <p class="sidebar-note">Unofficial, not affiliated with Papertrade. High leverage can lose your whole margin.</p>
+  </aside>
+  <main id="content" class="content" tabindex="-1">
+    <article class="doc">
+      <p class="doc-actions"><a href="/docs/changelog.md">View as markdown</a></p>
+<h1 id="changelog">Changelog<a class="anchor" href="#changelog" aria-label="Link to Changelog">#</a></h1>
+<p>The canonical history is <a href="https://github.com/nirholas/papertrade-terminal/blob/main/CHANGELOG.md">CHANGELOG.md</a> in the repository.</p>
+<h2 id="020">0.2.0<a class="anchor" href="#020" aria-label="Link to 0.2.0">#</a></h2>
+<p>Agent-ready release.</p>
+<ul>
+<li>Read-only MCP server at <code>/mcp</code> (Streamable HTTP, stateless) with nine tools: <code>list_markets</code>, <code>quote_open_position</code>, <code>quote_leverage_ladder</code>, <code>quote_close_position</code>, <code>get_wallet_positions</code>, <code>get_recent_trades</code>, <code>get_candles</code>, <code>get_protocol_status</code> and <code>build_trade_plan</code>.</li>
+<li>Deep links that open the terminal with market, side, margin and leverage prefilled, plus <code>?embed=1</code> for windowed use.</li>
+<li>Docs site at <code>/docs/</code> with search, per-page markdown twins, <code>llms.txt</code> and <code>llms-full.txt</code>.</li>
+<li>Agent discovery files: MCP server card, A2A agent card, API catalog, OpenAPI document, robots.txt and sitemap.</li>
+<li>Verified connection snippets for Claude, Codex, ChatGPT, Gemini CLI, Cursor, VS Code, Windsurf, Zed, Cline, Goose and Continue.</li>
+</ul>
+<h2 id="010-2026-10-10">0.1.0 - 2026-10-10<a class="anchor" href="#010-2026-10-10" aria-label="Link to 0.1.0 - 2026-10-10">#</a></h2>
+<p>Initial release.</p>
+<ul>
+<li>Wallet connect (EIP-6963 and <code>window.ethereum</code>), HyperEVM chain switch or add, balances, watch-only mode.</li>
+<li>SDK session keys with a signed <code>RegisterSessionKey</code>, expiry display and re-registration.</li>
+<li>Trading ticket with live marks, leverage up to 1000x, pre-trade panel, validations, confirm dialog and intent tracking.</li>
+<li>Live positions, batched close, history, pending orders and cancel.</li>
+<li>Candles with intervals, entry and bust lines, TradingView tab, HYPE/USDC pool chart.</li>
+<li>Deposit and withdraw flows with fees, route and minimums.</li>
+<li>KyberSwap swap with approve, minimum received and impact.</li>
+<li>Keyboard shortcuts, responsive mobile layout, light and dark themes, strict CSP.</li>
+</ul>
+
+      <nav class="pager" aria-label="Previous and next page"><a class="pager-prev" href="/docs/faq/" rel="prev"><span>Previous</span>FAQ</a><span></span></nav>
+    </article>
+    <footer class="foot">
+      <p>Unofficial, not affiliated with Papertrade. Papertrade allows up to 1000x leverage and a small move against a position can liquidate the whole margin. Not financial advice.</p>
+      <p><a href="/">Home</a> <a href="/app/">Terminal</a> <a href="/llms.txt">llms.txt</a> <a href="/mcp">MCP</a> <a href="https://github.com/nirholas/papertrade-terminal">GitHub</a> Apache-2.0</p>
+    </footer>
+  </main>
+  <aside class="toc-col" aria-label="Table of contents"><nav class="toc" aria-label="On this page"><p class="toc-title">On this page</p><ul><li class="toc-2"><a href="#020">0.2.0</a></li><li class="toc-2"><a href="#010-2026-10-10">0.1.0 - 2026-10-10</a></li></ul></nav></aside>
+</div>
+</body>
+</html>
