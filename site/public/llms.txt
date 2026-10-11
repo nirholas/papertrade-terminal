@@ -7,7 +7,7 @@ Connect an injected wallet, sign one RegisterSessionKey message, then trade with
 ## Links
 
 - [Terminal](https://papertrade-terminal.pages.dev/): the app. Use ?watch=0x... for a read-only account view.
-- [Source](https://github.com/nirholas/papertrade-terminal): MIT licensed.
+- [Source](https://github.com/nirholas/papertrade-terminal): Apache-2.0 licensed.
 - [papertrade-sdk](https://github.com/nirholas/papertrade-sdk): the protocol SDK this app is built on.
 - [papertrade-ai](https://github.com/nirholas/papertrade-ai): MCP server and CLI for agents.
 - [AGENTS.md](https://github.com/nirholas/papertrade-terminal/blob/main/AGENTS.md): rules for agents.

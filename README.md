@@ -77,4 +77,4 @@ cd site && npx wrangler pages deploy
 
 ## Disclaimer
 
-Unofficial, not affiliated with Papertrade, high leverage can lose your whole margin. MIT licensed. See [SECURITY.md](SECURITY.md).
+Unofficial, not affiliated with Papertrade, high leverage can lose your whole margin. Apache-2.0 licensed. See [SECURITY.md](SECURITY.md).

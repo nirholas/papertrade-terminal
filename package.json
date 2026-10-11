@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "Unofficial non-custodial trading terminal for Papertrade perps on HyperEVM: wallet connect, session keys, live positions, candlestick and TradingView charts, deposits, withdrawals and swaps. Runs as a Cloudflare Pages app.",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "author": "nirholas",
   "type": "module",
   "engines": {
