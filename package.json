@@ -24,13 +24,22 @@
     "trading-terminal",
     "eip-6963",
     "session-keys",
-    "lightweight-charts"
+    "lightweight-charts",
+    "perpetuals",
+    "non-custodial",
+    "tradingview",
+    "defi",
+    "crypto",
+    "web3",
+    "typescript",
+    "cloudflare-pages",
+    "leverage-trading"
   ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nirholas/papertrade-terminal.git"
   },
-  "homepage": "https://github.com/nirholas/papertrade-terminal#readme",
+  "homepage": "https://papertrade-terminal.pages.dev",
   "bugs": {
     "url": "https://github.com/nirholas/papertrade-terminal/issues"
   },

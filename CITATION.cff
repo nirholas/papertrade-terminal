@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it as below.
+title: "papertrade-terminal"
+abstract: "Non-custodial trading terminal for Papertrade perps on HyperEVM: wallet connect, session keys, live charts, positions, deposits, withdrawals and swaps. Cloudflare Pages app."
+license: Apache-2.0
+repository-code: "https://github.com/nirholas/papertrade-terminal"
+url: "https://papertrade-terminal.pages.dev"
+keywords: [papertrade, hyperliquid, hyperevm, perps, defi]
+authors:
+  - name: three.ws
+    website: "https://three.ws"
