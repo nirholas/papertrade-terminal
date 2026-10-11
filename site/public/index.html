@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Papertrade Terminal: trade 1000x perps from your own wallet, or from your AI</title>
+  <meta name="description" content="Unofficial non-custodial terminal for Papertrade perps on HyperEVM. Live charts, exact quote ladders, session keys that can never withdraw, and a read-only MCP server so Claude, Codex, ChatGPT, Gemini and Cursor can quote trades and hand them to you to sign.">
+  <link rel="canonical" href="https://papertrade-terminal.pages.dev/">
+  <meta property="og:title" content="Papertrade Terminal">
+  <meta property="og:description" content="Non-custodial Papertrade perps terminal with a read-only MCP server for AI agents.">
+  <meta property="og:url" content="https://papertrade-terminal.pages.dev/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#0b0e14">
+  <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+  <link rel="mcp-server" href="/mcp">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/landing.css">
+  <script src="/landing-theme.js"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Papertrade Terminal","description":"Unofficial non-custodial trading terminal for Papertrade perps on HyperEVM with a read-only MCP server.","url":"https://papertrade-terminal.pages.dev/","applicationCategory":"FinanceApplication","operatingSystem":"Any","license":"https://www.apache.org/licenses/LICENSE-2.0","codeRepository":"https://github.com/nirholas/papertrade-terminal","author":{"@type":"Person","name":"nirholas"}}
+  </script>
+  <script type="module" src="/landing.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="/" aria-label="Papertrade Terminal home"><span class="brand-mark" aria-hidden="true">&gt;_</span><span>papertrade<span class="brand-sub">terminal</span></span></a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#features">Features</a>
+        <a href="#ai">Connect your AI</a>
+        <a href="/docs/">Docs</a>
+        <a href="https://github.com/nirholas/papertrade-terminal">GitHub</a>
+      </nav>
+      <div class="nav-actions">
+        <button id="theme-btn" class="icon-btn" type="button" aria-label="Toggle light and dark theme"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></button>
+        <a class="btn btn-primary" href="/app/">Open terminal</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="eyebrow"><span id="status-dot" class="dot" data-kind="idle"></span><span id="status-text">Checking Papertrade</span></p>
+          <h1>Trade 1000x perps from your own wallet. Or let your AI quote them first.</h1>
+          <p class="lede">A fast, non-custodial terminal for Papertrade on HyperEVM, with a read-only MCP server. Your AI shows the exact bust price and close ladder, then hands you a link. You sign in your wallet. Nothing else ever does.</p>
+          <div class="cta">
+            <a class="btn btn-primary btn-lg" href="/app/">Open the terminal</a>
+            <a class="btn btn-lg" href="#ai">Connect your AI</a>
+          </div>
+          <p class="fine"><strong>Unofficial.</strong> An independent community project, not affiliated with Papertrade. High leverage can lose your whole margin in seconds.</p>
+        </div>
+        <aside class="ticket" aria-label="Live example quote">
+          <div class="ticket-head"><span>Live quote</span><span class="muted" id="ticket-src">from /mcp</span></div>
+          <div id="ticket-body" class="ticket-body" aria-live="polite">
+            <div class="sk sk-line"></div><div class="sk sk-line"></div><div class="sk sk-line"></div><div class="sk sk-line"></div>
+          </div>
+          <a id="ticket-link" class="btn btn-block" href="/app/" hidden>Open this order in the terminal</a>
+        </aside>
+      </div>
+    </section>
+
+    <section class="wrap markets" aria-labelledby="markets-h">
+      <div class="sec-head"><h2 id="markets-h">Live markets</h2><span class="muted small" id="markets-meta"></span></div>
+      <div id="markets" class="market-grid" aria-live="polite">
+        <div class="sk sk-card"></div><div class="sk sk-card"></div><div class="sk sk-card"></div><div class="sk sk-card"></div>
+      </div>
+      <div id="markets-state" class="state" hidden></div>
+    </section>
+
+    <section id="features" class="wrap" aria-labelledby="features-h">
+      <div class="sec-head"><h2 id="features-h">Built for people who read the fine print</h2></div>
+      <div class="grid">
+        <article class="card"><h3>Exact quote ladder</h3><p>Entry, bust price and what a close pays at six prices, from the same settlement math the protocol uses: deadband, impact haircut and the 2% win fee.</p></article>
+        <article class="card"><h3>Session keys, not custody</h3><p>Sign one message to register a key that can open and close but can never withdraw. It lives only in your browser and expires on its own.</p></article>
+        <article class="card"><h3>Live charts</h3><p>Papertrade mark candles, a TradingView view and the HYPE/USDC pool, with positions updating over the account stream.</p></article>
+        <article class="card"><h3>Deposit, withdraw, swap</h3><p>Fund from HyperEVM USDC, withdraw to your wallet and swap for gas without leaving the page.</p></article>
+        <article class="card"><h3>Keyboard first</h3><p>B and S flip side, M cycles markets, brackets nudge leverage, number keys jump between Trade, Positions, Fund and Swap. Press ? for the list.</p></article>
+        <article class="card"><h3>Agent ready</h3><p>Nine read-only MCP tools, an OpenAPI spec, an agent card and llms.txt. No keys, no accounts, no write access.</p></article>
+      </div>
+    </section>
+
+    <section class="wrap flow" aria-labelledby="flow-h">
+      <div class="sec-head"><h2 id="flow-h">From a question to a signed order</h2></div>
+      <ol class="steps">
+        <li><span class="n">1</span><div><h3>Ask</h3><p>"Quote a 10x BTC long with 1000 USDC and show me where it liquidates."</p></div></li>
+        <li><span class="n">2</span><div><h3>Review</h3><p>The agent calls <code>quote_open_position</code> and <code>build_trade_plan</code>, then gives you a prefilled link and the risk.</p></div></li>
+        <li><span class="n">3</span><div><h3>Sign</h3><p>The link opens this terminal with the ticket filled. You confirm and sign in your own wallet. The MCP server cannot do it for you.</p></div></li>
+      </ol>
+    </section>
+
+    <section id="ai" class="wrap" aria-labelledby="ai-h">
+      <div class="sec-head"><h2 id="ai-h">Connect your AI</h2><span class="muted small">No API key. Endpoint: <code>https://papertrade-terminal.pages.dev/mcp</code></span></div>
+      <p class="works" aria-label="Works with">
+        <span>Works with</span>
+        <b>Claude</b><b>Codex</b><b>ChatGPT</b><b>Gemini</b><b>Cursor</b><b>VS Code</b><b>Windsurf</b><b>Zed</b>
+      </p>
+      <div class="tabs" role="tablist" aria-label="Client">
+        <button role="tab" class="tab" id="t-claude" aria-selected="true" aria-controls="p-claude" data-tab="claude">Claude Code</button>
+        <button role="tab" class="tab" id="t-codex" aria-selected="false" aria-controls="p-codex" data-tab="codex" tabindex="-1">Codex</button>
+        <button role="tab" class="tab" id="t-gemini" aria-selected="false" aria-controls="p-gemini" data-tab="gemini" tabindex="-1">Gemini CLI</button>
+        <button role="tab" class="tab" id="t-cursor" aria-selected="false" aria-controls="p-cursor" data-tab="cursor" tabindex="-1">Cursor</button>
+        <button role="tab" class="tab" id="t-chat" aria-selected="false" aria-controls="p-chat" data-tab="chat" tabindex="-1">Claude.ai / ChatGPT</button>
+      </div>
+      <div class="panes">
+        <div role="tabpanel" id="p-claude" aria-labelledby="t-claude" data-pane="claude">
+          <div class="code"><pre><code>claude mcp add --transport http papertrade-terminal https://papertrade-terminal.pages.dev/mcp</code></pre><button class="copy" type="button">Copy</button></div>
+        </div>
+        <div role="tabpanel" id="p-codex" aria-labelledby="t-codex" data-pane="codex" hidden>
+          <div class="code"><pre><code>codex mcp add papertrade-terminal --url https://papertrade-terminal.pages.dev/mcp</code></pre><button class="copy" type="button">Copy</button></div>
+        </div>
+        <div role="tabpanel" id="p-gemini" aria-labelledby="t-gemini" data-pane="gemini" hidden>
+          <p class="muted small">Add to <code>~/.gemini/settings.json</code></p>
+          <div class="code"><pre><code>{
+  "mcpServers": {
+    "papertrade-terminal": { "httpUrl": "https://papertrade-terminal.pages.dev/mcp" }
+  }
+}</code></pre><button class="copy" type="button">Copy</button></div>
+        </div>
+        <div role="tabpanel" id="p-cursor" aria-labelledby="t-cursor" data-pane="cursor" hidden>
+          <p class="muted small">Add to <code>.cursor/mcp.json</code></p>
+          <div class="code"><pre><code>{
+  "mcpServers": {
+    "papertrade-terminal": { "url": "https://papertrade-terminal.pages.dev/mcp" }
+  }
+}</code></pre><button class="copy" type="button">Copy</button></div>
+        </div>
+        <div role="tabpanel" id="p-chat" aria-labelledby="t-chat" data-pane="chat" hidden>
+          <p>Add a custom connector (Claude.ai: Settings, Connectors) or an MCP server in ChatGPT developer mode, and paste this URL. Authentication: none.</p>
+          <div class="code"><pre><code>https://papertrade-terminal.pages.dev/mcp</code></pre><button class="copy" type="button">Copy</button></div>
+        </div>
+      </div>
+      <p class="muted small more">Claude Desktop, the Claude and OpenAI APIs, VS Code, Windsurf, Zed, Cline, Goose and Continue are in <a href="/docs/connect-your-ai/">the full guide</a>. Any framework can also use <a href="/openapi.json">openapi.json</a>.</p>
+    </section>
+
+    <section class="wrap" aria-labelledby="start-h">
+      <div class="sec-head"><h2 id="start-h">Quickstart</h2></div>
+      <div class="grid grid-3">
+        <article class="card"><h3>1. Open it</h3><p><a href="/app/">Open the terminal</a>, connect any EIP-6963 wallet and switch to HyperEVM. Or paste an address to watch read-only.</p></article>
+        <article class="card"><h3>2. Enable trading</h3><p>Sign one gas-free message to register a session key. Fund the account from the Fund tab.</p></article>
+        <article class="card"><h3>3. Trade</h3><p>Pick a market, side, margin and leverage, read the ladder, review and confirm. Prefill any of it with <code>?market=BTC&amp;side=long&amp;margin=1000&amp;leverage=10</code>.</p></article>
+      </div>
+      <p class="os"><a class="btn" href="https://papertrade-os.pages.dev/?open=terminal" target="_blank" rel="noopener">Open in Papertrade OS</a><span class="muted small">Run the terminal as a window in the Papertrade desktop.</span></p>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">
+      <p class="risk"><strong>Unofficial.</strong> An independent community project, not affiliated with Papertrade. High leverage can lose your whole margin in seconds and none of this is financial advice. This site never sees your wallet key and its MCP server is read-only.</p>
+      <nav class="foot-links" aria-label="Footer">
+        <a href="/docs/">Docs</a>
+        <a href="https://github.com/nirholas/papertrade-terminal">GitHub</a>
+        <a href="/llms.txt">llms.txt</a>
+        <a href="/mcp">MCP</a>
+        <a href="/openapi.json">OpenAPI</a>
+        <a href="/.well-known/agent-card.json">Agent card</a>
+        <a href="/.well-known/mcp/server-card.json">Server card</a>
+        <a href="https://github.com/nirholas/papertrade-sdk">papertrade-sdk</a>
+        <a href="https://papertrade.xyz">papertrade.xyz</a>
+      </nav>
+      <p class="muted small">Apache-2.0. Charts by TradingView Lightweight Charts.</p>
+    </div>
+  </footer>
+  <noscript><p class="wrap muted small">Live market data needs JavaScript. The terminal, docs and MCP endpoint work without this page.</p></noscript>
+</body>
+</html>
