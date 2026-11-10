@@ -1,0 +1,20 @@
+{
+  "name": "papertrade-terminal",
+  "owner": {
+    "name": "nirholas"
+  },
+  "description": "Quote Papertrade perps and prepare unsigned trade plans from an agent via the terminal's read-only MCP server.",
+  "plugins": [
+    {
+      "name": "papertrade-terminal",
+      "source": "./",
+      "description": "Quote Papertrade perps and prepare unsigned trade plans from an agent via the terminal's read-only MCP server.",
+      "tags": [
+        "mcp",
+        "perps",
+        "hyperevm",
+        "trading"
+      ]
+    }
+  ]
+}
