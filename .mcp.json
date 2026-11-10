@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "papertrade-terminal": {
+      "type": "http",
+      "url": "https://papertrade-terminal.pages.dev/mcp"
+    }
+  }
+}

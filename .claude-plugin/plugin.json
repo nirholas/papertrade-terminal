@@ -1,0 +1,18 @@
+{
+  "name": "papertrade-terminal",
+  "version": "0.2.0",
+  "description": "Quote Papertrade perps and prepare unsigned trade plans from an agent via the terminal's read-only MCP server.",
+  "author": {
+    "name": "nirholas"
+  },
+  "repository": "https://github.com/nirholas/papertrade-terminal",
+  "license": "Apache-2.0",
+  "keywords": [
+    "mcp",
+    "papertrade",
+    "hyperevm",
+    "perps",
+    "trading-terminal"
+  ],
+  "homepage": "https://papertrade-terminal.pages.dev"
+}
