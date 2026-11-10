@@ -7,8 +7,9 @@
   "plugins": [
     {
       "name": "papertrade-terminal",
-      "source": "./",
+      "source": "./plugins/papertrade-terminal",
       "description": "Quote Papertrade perps and prepare unsigned trade plans from an agent via the terminal's read-only MCP server.",
+      "category": "development",
       "tags": [
         "mcp",
         "perps",
